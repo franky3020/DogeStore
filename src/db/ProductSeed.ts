@@ -24,7 +24,7 @@ export default class ProductsSeed {
                 var sql = "CREATE TABLE IF NOT EXISTS `Products` \
                             (`id` INT NOT NULL AUTO_INCREMENT, \
                             `name` VARCHAR(255),  \
-                            `price` INT, `describe` TEXT, `photos` INT, PRIMARY KEY ( `id` ))";
+                            `price` INT, `describe` TEXT, PRIMARY KEY ( `id` ))";
                 
                 connection.query(sql, function (err, result) {
                     if (err) throw err;
@@ -70,18 +70,16 @@ export default class ProductsSeed {
                 (\
                 `name`,\
                 `price`,\
-                `describe`,\
-                `photos`)\
+                `describe`)\
                 VALUES\
                 (\
                 ?,\
                 ?,\
-                ?,\
                 ?)";
 
-                const product = new Product("test", 100, "test_m");
+                const product = new Product(null, "test", 100, "test_m");
 
-                connection.query(sql, [product.name, product.price, product.describe, 0], function (err, result) {
+                connection.query(sql, [product.name, product.price, product.describe], function (err, result) {
                     if (err) throw err;
                     resolve(result as any);
                 });

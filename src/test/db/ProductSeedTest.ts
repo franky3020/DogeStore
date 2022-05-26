@@ -7,14 +7,14 @@ import {createNewDatabase, deletesDatabase} from "../../db/db";
 testCreateDB();
 
 async function testCreateDB() {
-    let databaseName = "test526";
+    let databaseName = "test";
 
-    deletesDatabase(databaseName);
+    await deletesDatabase(databaseName);
     let connection: mysql.Connection = await createNewDatabase(databaseName);
 
     let productSeed = new ProductsSeed(connection);
-    productSeed.drop();
-    productSeed.create();
+    await productSeed.drop();
+    await productSeed.create();
 
     for(let i = 0 ; i < 100 ; i++) {
         await productSeed.addAProduct();

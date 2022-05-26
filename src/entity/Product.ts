@@ -1,14 +1,17 @@
 class Product {
 
+    id: number | null; // Todo: 要檢查這利用 null 好不好
     name: string;
     price: number;
     describe: string;
-    photos: string[];// save url
+    photos: string[];// 描述產品本身的照片, 展示的縮圖 未來可加
 
-    constructor(name: string, price: number, describe: string, photos?: string[]) {
+    constructor(id: number | null, name: string, price: number, describe: string, photos?: string[]) {
         this.name = name;
         this.price = price;
         this.describe = describe;
+
+        this.id = id;
 
         if ( photos ) {
             this.photos = photos;
@@ -19,10 +22,24 @@ class Product {
     }
 
     toString(): string {
-        let nameStr: string = "name: " + this.name + "\n"; 
-        let priceStr: string = "price: " + this.price + "\n"; 
-        let describeStr: string = "describe: " + this.describe + "\n"; 
 
+        let outStr = "";
+
+        if(this.id) {
+            let idNum = this.id as number;
+            outStr += "id: " + idNum.toString() + '\n';
+        }
+        
+
+        let nameStr: string = "name: " + this.name + "\n"; 
+        outStr += nameStr;
+        
+        let priceStr: string = "price: " + this.price + "\n"; 
+        outStr += priceStr;
+
+        let describeStr: string = "describe: " + this.describe + "\n"; 
+        outStr += describeStr;
+        
         let photosStr: string = "photos: [ ";
         for(const [index, photo] of this.photos.entries()) { // photos: [ 1_URL, 2_URL ]
             if ( index === 0 ) {
@@ -32,8 +49,12 @@ class Product {
             photosStr += ', ' + photo ;
         }
         photosStr += " ]\n";
+        outStr += photosStr;
 
-        return nameStr + priceStr + describeStr + photosStr;
+
+
+        
+        return outStr;
 
     }
 
