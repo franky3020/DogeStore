@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build:live",
+    "start": "npm run build && node ./build/index.js",
     "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts",
-    "build": "tsc index.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
