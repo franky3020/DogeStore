@@ -1,6 +1,10 @@
+
+import {connection} from "./db"
 import ProductsSeed from "./ProductSeed";
-ProductsSeed.drop();
-ProductsSeed.create();
+
+let productSeed = new ProductsSeed(connection);
+productSeed.drop();
+productSeed.create();
 
 
 

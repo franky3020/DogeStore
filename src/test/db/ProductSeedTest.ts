@@ -1,21 +1,27 @@
 import ProductsSeed from "../../db/ProductSeed";
+import mysql from "mysql2";
 
-import {connection} from "../../db/db";
+import {createNewDatabase, deletesDatabase} from "../../db/db";
 
 
+testCreateDB();
 
-async function testCol() {
+async function testCreateDB() {
+    let databaseName = "test526";
 
-    await ProductsSeed.drop();
-    
-    await ProductsSeed.create();
+    deletesDatabase(databaseName);
+    let connection: mysql.Connection = await createNewDatabase(databaseName);
+
+    let productSeed = new ProductsSeed(connection);
+    productSeed.drop();
+    productSeed.create();
 
     for(let i = 0 ; i < 100 ; i++) {
-        await ProductsSeed.addAProduct();
+        await productSeed.addAProduct();
     }
 
 
-    let sql :string = "SELECT * FROM `database`.`Products`";
+    let sql :string = "SELECT * FROM `Products`";
 
     connection.query(sql, function (err, result) {
         if (err) throw err;
@@ -24,6 +30,5 @@ async function testCol() {
     });
 }
 
-testCol();
 
 

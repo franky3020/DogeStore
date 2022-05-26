@@ -1,11 +1,19 @@
 
-import { connection } from "./db";
+// import { connection } from "./db";
 import Product from "../entity/Product";
+import mysql from "mysql2";
 
 
 export default class ProductsSeed {
 
-    static create() :Promise<void> {
+    connection: mysql.Connection;
+    
+    constructor(connection: mysql.Connection) {
+        this.connection = connection;
+    }
+
+    create() :Promise<void> {
+        let connection = this.connection;
 
         return new Promise<void>((resolve) => {
 
@@ -31,7 +39,9 @@ export default class ProductsSeed {
 
     }
 
-    static drop(): Promise<void> {
+    drop(): Promise<void> {
+        let connection = this.connection;
+        
         return new Promise( (resolve) => {
             connection.connect(function (err) {
 
@@ -48,43 +58,15 @@ export default class ProductsSeed {
         })
     }
 
-    // static addSomeProduct(n: number): Promise<void> {
-    //     return new Promise( (resolve) => {
-    //         connection.connect(function (err) {
+    addAProduct(): Promise<void> {
+        let connection = this.connection;
 
-    //             if (err) throw err;
-        
-    //             var sql = "INSERT INTO `database`.`Products`\
-    //             (\
-    //             `name`,\
-    //             `price`,\
-    //             `describe`,\
-    //             `photos`)\
-    //             VALUES\
-    //             (\
-    //             ?,\
-    //             ?,\
-    //             ?,\
-    //             ?)";
-
-    //             const product = new Product("test", 100, "test_m");
-
-    //             for( let i = 0 ; i < n ; i++) { // 如何非同步執行 但知道所有都執行完 才呼叫resolve?
-    //                 connection.query(sql, [product.name, product.price, product.describe, 0], function (err, result) {
-    //                     if (err) throw err;
-    //                 });
-    //             }
-    //         });
-    //     })
-    // }
-
-    static addAProduct(): Promise<void> {
         return new Promise( (resolve) => {
             connection.connect(function (err) {
 
                 if (err) throw err;
         
-                var sql = "INSERT INTO `database`.`Products`\
+                var sql = "INSERT INTO `Products`\
                 (\
                 `name`,\
                 `price`,\
