@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node ./build/index.js",
+    "start": "npm run build && node -r dotenv/config ./build/index.js",
     "dev": "concurrently \"npm:watch\" \"npm:serve\"",
-    "serve": "nodemon ./build/index.js",
+    "serve": "nodemon -r dotenv/config ./build/index.js",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,6 +23,7 @@
     "@types/mysql": "^2.15.21",
     "concurrently": "^7.2.1",
     "dotenv": "^16.0.1",
+    "dotenv-flow": "^3.2.0",
     "mysql2": "^2.3.3",
     "sequelize": "^6.20.0"
   }

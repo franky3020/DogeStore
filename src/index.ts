@@ -1,4 +1,3 @@
-import {connection} from "./mysql";
 
 // connection.connect( (err: any) => {
 //     if(err) {
@@ -10,3 +9,4 @@ import {connection} from "./mysql";
 
 import test from "./test/testProductEntity";
 test();
+console.log(process.env.NODE_ENV);
