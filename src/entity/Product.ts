@@ -3,7 +3,7 @@ class Product {
     name: string;
     price: number;
     describe: string;
-    photos: string[];// save url
+    photos: string[];// 描述產品本身的照片, 展示的縮圖 未來可加
 
     constructor(name: string, price: number, describe: string, photos?: string[]) {
         this.name = name;
