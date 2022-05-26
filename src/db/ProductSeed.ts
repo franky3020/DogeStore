@@ -77,7 +77,7 @@ export default class ProductsSeed {
                 ?,\
                 ?)";
 
-                const product = new Product("test", 100, "test_m");
+                const product = new Product(null, "test", 100, "test_m");
 
                 connection.query(sql, [product.name, product.price, product.describe], function (err, result) {
                     if (err) throw err;
