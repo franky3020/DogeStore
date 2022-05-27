@@ -37,10 +37,10 @@ describe("Product CRUD", ()=>{
         let p1: Product|null = await productDAO.findById(1);
 
         if ( p1 !== null ) {
-            expect(1).toEqual(p1.id);
-            expect("p_1").toEqual(p1.name);
-            expect(200).toEqual(p1.price);
-            expect("p_d").toEqual(p1.describe);
+            expect(p1.id).toEqual(1);
+            expect(p1.name).toEqual("p_1");
+            expect(p1.price).toEqual(200);
+            expect(p1.describe).toEqual("p_d");
         }
         
 
@@ -49,7 +49,7 @@ describe("Product CRUD", ()=>{
     test("findAll", async ()=> {
         let products: Product[] = await productDAO.findAll();
         let expectLength = 2;
-        expect(expectLength).toEqual(products.length);
+        expect(products.length).toEqual(expectLength);
     })
 
     test("not find", async ()=> {
@@ -66,11 +66,10 @@ describe("Product CRUD", ()=>{
         let product: Product|null = await productDAO.findById(1);
 
         if ( p_updata !== null && product !== null) {
-
-            expect(p_updata.id).toBe(product.id);
-            expect(p_updata.name).toBe(product.name);
-            expect(p_updata.price).toBe(product.price);
-            expect(p_updata.describe).toBe(product.describe);
+            expect(product.id).toBe(p_updata.id);
+            expect(product.name).toBe(p_updata.name);
+            expect(product.price).toBe(p_updata.price);
+            expect(product.describe).toBe(p_updata.describe);
         }
 
         let p1: Product = new Product(1, "p_1", 200, "p_d");

@@ -6,15 +6,13 @@ describe("Product Entity test", () => {
 
     test('photo init', () => {
         let product = new Product(1, "test", 100, "test_d");
-
-        let expected: string[] = [];
-
+        
         let actual: string[] = product.photos;
-
-        expect(expected).toEqual(actual);
+        let expected: string[] = [];
+        expect(actual).toEqual(expected);
         
         let productHasInput = new Product(1, "test", 100, "test_d", [ "url" ]);
-        expect([ "url" ]).toEqual(productHasInput.photos);
+        expect(productHasInput.photos).toEqual([ "url" ]);
 
     });
 
@@ -22,11 +20,12 @@ describe("Product Entity test", () => {
     test('toSring', () => {
         let product = new Product(1, "test", 100, "test_d", [ "0", "1" ]);
 
+        let actual: string = product.toString(); 
+
         let expected = "id: 1\nname: test\nprice: 100\ndescribe: test_d\nphotos: [ 0, 1 ]\n";
 
-        let actual: string = product.toString();
 
-        expect(expected).toBe(actual);
+        expect(actual).toBe(expected);
     });
 
     
