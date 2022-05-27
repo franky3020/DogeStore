@@ -1,4 +1,5 @@
 import mysql from "mysql2";
+import 'dotenv/config';
 
 export const connection = mysql.createConnection({ // 要注意connection 拿著太久時 會出錯
   host: process.env.DB_HOST,
