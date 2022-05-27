@@ -28,7 +28,7 @@ export default class ProductsSeed {
                 
                 connection.query(sql, function (err, result) {
                     if (err) throw err;
-                    resolve(result as any);
+                    return resolve(result as any);
                 });
              
             });
@@ -48,7 +48,7 @@ export default class ProductsSeed {
                 var sql = "DROP TABLE IF EXISTS `Products`";
                 connection.query(sql, function (err, result) {
                     if (err) throw err;
-                    resolve(result as any);
+                    return resolve(result as any);
                 });
             });
         })

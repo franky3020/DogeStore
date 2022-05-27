@@ -34,7 +34,7 @@ export default class ProductDAO {
     
                 connection.query(sql, [product.name, product.price, product.describe], function (err, result) {
                     if (err) throw err;
-                    resolve(result as any);
+                    return resolve(result as any);
                 });
 
             });
@@ -68,7 +68,7 @@ export default class ProductDAO {
 
                 let product = products[0];
                 
-                resolve(new Product(product.id, product.name, product.price, product.describe, ["0"]));
+                return resolve(new Product(product.id, product.name, product.price, product.describe, ["0"]));
                 
             });
         });
@@ -89,7 +89,7 @@ export default class ProductDAO {
                 for(const product of jResult as Product[]) {
                     returnProducts.push(new Product(product.id, product.name, product.price, product.describe, ["0"]));
                 }
-                resolve(returnProducts);
+                return resolve(returnProducts);
                 
             });
         });

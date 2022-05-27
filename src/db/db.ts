@@ -35,7 +35,7 @@ export function createNewDatabase(databaseName: string): Promise<mysql.Connectio
           port: process.env.DB_PORT as unknown as number
         });
         connection.end();
-        resolve(newConnection as any);
+        return resolve(newConnection as any);
 
       });
 
@@ -64,7 +64,7 @@ export function deletesDatabase(databaseName: string): Promise<void> { // return
       connection.execute("DROP DATABASE IF EXISTS " + databaseName , function (err, result) {
         if (err) throw err;
         connection.end();
-        resolve();
+        return resolve();
       });
 
     });
