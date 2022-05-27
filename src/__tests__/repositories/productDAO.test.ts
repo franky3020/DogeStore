@@ -18,7 +18,7 @@ beforeAll(async () => {
     connection = await createNewDatabase(testDatabaseName);
 
     productsSeed = new ProductsSeed(connection);
-    await productsSeed.createTable(); // 創建table, 應該要改名
+    await productsSeed.createTable();
 
     productDAO = new ProductDAO(connection);
 

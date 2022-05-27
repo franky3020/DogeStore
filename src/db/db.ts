@@ -1,13 +1,21 @@
 import mysql from "mysql2";
 import 'dotenv/config';
 
-export function getNewConnection(): mysql.Connection {
+export function getNewConnection(databaseName?: string): mysql.Connection {
+
+  let dbName: string;
+  if( databaseName ) {
+    dbName = databaseName;
+  } else {
+    dbName = process.env.DB_NAME as string;
+  }
+
 
   const connection = mysql.createConnection({ // 要注意connection 拿著太久時 會出錯
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PWD,
-    database: process.env.DB_NAME,
+    database: dbName,
     port: process.env.DB_PORT as unknown as number
   });
 
