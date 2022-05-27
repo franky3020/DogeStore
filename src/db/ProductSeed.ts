@@ -37,7 +37,7 @@ export default class ProductsSeed {
 
     }
 
-    drop(): Promise<void> {
+    dropTable(): Promise<void> {
         let connection = this.connection;
         
         return new Promise( (resolve) => {

@@ -15,27 +15,31 @@ export default class ProductDAO {
     create(product: Product): Promise<void> {
         let connection = this.connection;
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
 
             connection.connect(function (err) {
 
                 if (err) throw err;
+
+                if( product.id !== null ) {
+
+                    let sql = "INSERT INTO `Products`(`id`,`name`,`price`, `describe`)VALUES(?,?,?,?)";
+                    connection.query(sql, [product.id, product.name, product.price, product.describe], function (err, result) {
+                        if (err) reject(err);
+                        return resolve();
+                    });
+
+
+                } else {
+
+                    let sql = "INSERT INTO `Products`(`name`,`price`,`describe`)VALUES(?,?,?)";
+                    connection.query(sql, [product.name, product.price, product.describe], function (err, result) {
+                        if (err) reject(err);
+                        return resolve();
+                    });
+                }
         
-                var sql = "INSERT INTO `Products`\
-                (\
-                `name`,\
-                `price`,\
-                `describe`)\
-                VALUES\
-                (\
-                ?,\
-                ?,\
-                ?)";
-    
-                connection.query(sql, [product.name, product.price, product.describe], function (err, result) {
-                    if (err) throw err;
-                    return resolve(result as any);
-                });
+                
 
             });
 

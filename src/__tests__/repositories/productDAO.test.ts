@@ -10,6 +10,9 @@ let productsSeed: ProductsSeed;
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
 
+const p1_init: Product = new Product(55, "p_1", 200, "p_d");
+const p2_init: Product = new Product(66, "p_2", 200, "p_d");
+
 beforeAll(async () => {
     await deletesDatabase(testDatabaseName);
     connection = await createNewDatabase(testDatabaseName);
@@ -18,10 +21,9 @@ beforeAll(async () => {
     await productsSeed.createTable(); // 創建table, 應該要改名
 
     productDAO = new ProductDAO(connection);
-    let p1: Product = new Product(1, "p_1", 200, "p_d");
-    let p2: Product = new Product(2, "p_2", 200, "p_d");
-    await productDAO.create(p1);
-    await productDAO.create(p2);
+
+    await productDAO.create(p1_init);
+    await productDAO.create(p2_init);
 
 });
 
@@ -37,10 +39,10 @@ describe("Product CRUD", ()=>{
         let p1: Product|null = await productDAO.findById(1);
 
         if ( p1 !== null ) {
-            expect(p1.id).toEqual(1);
-            expect(p1.name).toEqual("p_1");
-            expect(p1.price).toEqual(200);
-            expect(p1.describe).toEqual("p_d");
+            expect(p1.id).toEqual(p1_init.id);
+            expect(p1.name).toEqual(p1_init.name);
+            expect(p1.price).toEqual(p1_init.price);
+            expect(p1.describe).toEqual(p1_init.describe);
         }
         
 
@@ -59,11 +61,11 @@ describe("Product CRUD", ()=>{
     
     test("update", async ()=> {
 
-        let p_updata: Product = new Product(1, "updata", 200, "updata");
+        let p_updata: Product = new Product(p1_init.id, "updata", 200, "updata");
 
         await productDAO.update(p_updata);
 
-        let product: Product|null = await productDAO.findById(1);
+        let product: Product|null = await productDAO.findById(77);
 
         if ( p_updata !== null && product !== null) {
             expect(product.id).toBe(p_updata.id);
@@ -72,22 +74,22 @@ describe("Product CRUD", ()=>{
             expect(product.describe).toBe(p_updata.describe);
         }
 
-        let p1: Product = new Product(1, "p_1", 200, "p_d");
-        await productDAO.update(p1);
+        await productDAO.update(p1_init);
 
     })
 
 
     test("Delete", async ()=> {
 
-
-        await productDAO.deleteById(1);
-
-        let product: Product|null = await productDAO.findById(1);
-        expect(product).toBeNull(); 
-
-        let p1: Product = new Product(1, "p_1", 200, "p_d");
-        await productDAO.create(p1);
+        if(p1_init.id !== null) {
+            await productDAO.deleteById( p1_init.id );
+            
+            let product: Product|null = await productDAO.findById(p1_init.id);
+            expect(product).toBeNull(); 
+            
+        }
+        
+        await productDAO.create(p1_init);
 
     })
     
