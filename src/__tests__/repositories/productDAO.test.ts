@@ -13,7 +13,7 @@ beforeAll(async () => {
     let connection: mysql.Connection = await createNewDatabase(testDatabaseName);
 
     productsSeed = new ProductsSeed(connection);
-    await productsSeed.create(); // 創建table, 應該要改名
+    await productsSeed.createTable(); // 創建table, 應該要改名
 
     productDAO = new ProductDAO(connection);
     let p1: Product = new Product(1, "p_1", 200, "p_d");
@@ -21,9 +21,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
-    
     await deletesDatabase(testDatabaseName);
-
 });
 
 describe("Find a Product", ()=>{

@@ -4,7 +4,7 @@ import ProductsSeed from "./ProductSeed";
 
 let productSeed = new ProductsSeed(connection);
 productSeed.drop();
-productSeed.create();
+productSeed.createTable();
 
 
 

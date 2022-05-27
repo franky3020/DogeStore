@@ -14,7 +14,7 @@ async function testCreateDB() {
 
     let productSeed = new ProductsSeed(connection);
     await productSeed.drop();
-    await productSeed.create();
+    await productSeed.createTable();
 
     for(let i = 0 ; i < 100 ; i++) {
         await productSeed.addAProduct();

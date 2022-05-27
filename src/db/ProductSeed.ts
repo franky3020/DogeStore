@@ -12,7 +12,7 @@ export default class ProductsSeed {
         this.connection = connection;
     }
 
-    create() :Promise<void> {
+    createTable() :Promise<void> {
         let connection = this.connection;
 
         return new Promise<void>((resolve) => {

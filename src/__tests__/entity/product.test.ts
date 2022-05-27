@@ -16,10 +16,6 @@ describe("Product Entity test", () => {
         let productHasInput = new Product(1, "test", 100, "test_d", [ "url" ]);
         expect([ "url" ]).toEqual(productHasInput.photos);
 
-
-
-
-
     });
 
 
