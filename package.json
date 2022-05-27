@@ -9,6 +9,7 @@
     "serve": "nodemon -r dotenv/config ./build/index.js",
     "build": "tsc",
     "watch": "tsc -w",
+    "test_and_coverage": "jest --coverage --collectCoverageFrom='./src/**'",
     "test": "jest"
   },
   "author": "",

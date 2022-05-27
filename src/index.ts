@@ -6,7 +6,3 @@
 // });
 
 // connection.end();
-
-import test from "./test/testProductEntity";
-test();
-console.log(process.env.NODE_ENV);

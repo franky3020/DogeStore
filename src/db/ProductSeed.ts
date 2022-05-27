@@ -28,9 +28,7 @@ export default class ProductsSeed {
                 
                 connection.query(sql, function (err, result) {
                     if (err) throw err;
-                    console.log("createProductTable");
                     resolve(result as any);
-
                 });
              
             });
@@ -50,43 +48,11 @@ export default class ProductsSeed {
                 var sql = "DROP TABLE IF EXISTS `Products`";
                 connection.query(sql, function (err, result) {
                     if (err) throw err;
-        
-                    console.log("deleteProductTable");
                     resolve(result as any);
                 });
             });
         })
     }
-
-    addAProduct(): Promise<void> {
-        let connection = this.connection;
-
-        return new Promise( (resolve) => {
-            connection.connect(function (err) {
-
-                if (err) throw err;
-        
-                var sql = "INSERT INTO `Products`\
-                (\
-                `name`,\
-                `price`,\
-                `describe`)\
-                VALUES\
-                (\
-                ?,\
-                ?,\
-                ?)";
-
-                const product = new Product(null, "test", 100, "test_m");
-
-                connection.query(sql, [product.name, product.price, product.describe], function (err, result) {
-                    if (err) throw err;
-                    resolve(result as any);
-                });
-            });
-        })
-    }
-
 
 }
 

@@ -43,7 +43,11 @@ export default class ProductDAO {
     }
 
     update(product: Product) {
-        // test push
+        
+
+
+
+
     }
 
     findById(id: number): Promise<Product> {
@@ -52,11 +56,15 @@ export default class ProductDAO {
 
         let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             connection.execute(sql, [id], function (err, result) {
                 if (err) throw err;
     
                 let products: Product[] = JSON.parse(JSON.stringify(result));
+
+                if ( products.length === 0 ) {
+                    return reject(new Error('not find'));
+                }
 
                 let product = products[0];
                 
