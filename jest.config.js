@@ -3,5 +3,7 @@ module.exports = {
   coverageDirectory: "coverage",
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testRegex: "/test/.*\.test\.ts$"
+  testRegex: "/__tests__/.*\.test\.ts$",
+  collectCoverage: true,
+  collectCoverageFrom: ["./src/**"]
 };
