@@ -1,12 +1,27 @@
 import mysql from "mysql2";
+import 'dotenv/config';
 
-export const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PWD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT as unknown as number
-});
+export function getNewConnection(databaseName?: string): mysql.Connection {
+
+  let dbName: string;
+  if( databaseName ) {
+    dbName = databaseName;
+  } else {
+    dbName = process.env.DB_NAME as string;
+  }
+
+
+  const connection = mysql.createConnection({ // 要注意connection 拿著太久時 會出錯
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD,
+    database: dbName,
+    port: process.env.DB_PORT as unknown as number
+  });
+
+  return connection;
+
+}
 
 
 export function createNewDatabase(databaseName: string): Promise<mysql.Connection> { // return newConnection
@@ -26,7 +41,6 @@ export function createNewDatabase(databaseName: string): Promise<mysql.Connectio
       connection.execute("CREATE DATABASE IF NOT EXISTS " + databaseName, function (err, result) {
         if (err) throw err;
 
-
         let newConnection: mysql.Connection = mysql.createConnection({
           host: process.env.DB_HOST,
           user: process.env.DB_USER,
@@ -34,10 +48,13 @@ export function createNewDatabase(databaseName: string): Promise<mysql.Connectio
           database: databaseName,
           port: process.env.DB_PORT as unknown as number
         });
-        resolve(newConnection as any);
+        connection.end();
+        return resolve(newConnection as any);
+
       });
 
     });
+    
   });
 
 
@@ -60,13 +77,12 @@ export function deletesDatabase(databaseName: string): Promise<void> { // return
 
       connection.execute("DROP DATABASE IF EXISTS " + databaseName , function (err, result) {
         if (err) throw err;
-
-
-        
-        resolve();
+        connection.end();
+        return resolve();
       });
 
     });
+    
   });
 
 
