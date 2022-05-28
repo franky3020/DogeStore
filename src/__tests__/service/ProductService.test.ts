@@ -7,15 +7,19 @@ import { deletesDatabase } from "../../db/db";
 import mysql from "mysql2";
 import ProductDAO from "../../repositories/ProductDAO";
 import Product from "../../entity/Product";
+import {initAlltables} from "../../db/seed";
+import UserDAO from "../../repositories/UserDAO";
 
 const testDatabaseName = "testDB";
 let connection: mysql.Connection;
 let productDAO: ProductDAO;
-import {initAlltables} from "../../db/seed";
 
 beforeAll(async () => {
     connection = await initAlltables(testDatabaseName);
     productDAO = new ProductDAO(connection);
+    let userDAO = new UserDAO(connection);
+    userDAO.easyCreate(1,"u_email", "franky", "ya");
+
 });
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
@@ -29,6 +33,7 @@ describe("Product service", ()=>{
         let productService = ProductService.getInstance();
         productService.changeDBTo(testDatabaseName);
 
+        
         await productService.addProduct("test", 1, 100, "yaya");
         let products: Product[] = await productDAO.findAll();
 

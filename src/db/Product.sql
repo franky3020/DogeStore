@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS `Products` (
     `create_user_id` INT,
     `price` INT,
     `describe` TEXT,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_user_id` FOREIGN KEY (`create_user_id`) REFERENCES User(`id`)
 )

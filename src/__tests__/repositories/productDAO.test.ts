@@ -1,4 +1,5 @@
 import ProductDAO from "../../repositories/ProductDAO";
+import UserDAO from "../../repositories/UserDAO";
 import mysql from "mysql2";
 import { deletesDatabase } from "../../db/db";
 import Product from "../../entity/Product";
@@ -9,6 +10,8 @@ import {initAlltables} from "../../db/seed";
 let testDatabaseName = "testDatabase";
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
+let userDAO: UserDAO;
+
 
 const p1_init: Product = new Product(55, "p_1", 1, 200, "p_d");
 const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
@@ -17,6 +20,9 @@ beforeAll(async () => {
     connection = await initAlltables(testDatabaseName);
     productDAO = new ProductDAO(connection);
 
+    userDAO = new UserDAO(connection);
+
+    userDAO.easyCreate(1,"u_email", "franky", "ya");
     await productDAO.create(p1_init);
     await productDAO.create(p2_init);
 
@@ -56,7 +62,7 @@ describe("Product CRUD", ()=>{
     
     test("update", async ()=> {
 
-        let p_updata: Product = new Product(p1_init.id, "updata", 5, 200, "updata");
+        let p_updata: Product = new Product(p1_init.id, "updata", 1, 200, "updata");
 
         await productDAO.update(p_updata);
 

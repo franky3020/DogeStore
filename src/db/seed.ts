@@ -12,13 +12,20 @@ export function initAlltables(databaseName: string): Promise<mysql.Connection> {
         let connection: mysql.Connection = await createNewDatabase(databaseName);
     
         let seedDBFromSQLFile = new SeedDBFromSQLFile(connection)
-        await seedDBFromSQLFile.createTable(path.join(__dirname, "./Product.sql"));
         await seedDBFromSQLFile.createTable(path.join(__dirname, "./User.sql"));
+        await seedDBFromSQLFile.createTable(path.join(__dirname, "./Product.sql"));
 
         return resolve(connection);
 
     });
 }
+
+if (require.main === module) {
+    initAlltables("db_create_from_seed").then((connection)=>{
+        connection.end();// 有end, 程式才會正常結束 重要
+        console.log("over")
+    });
+} 
 
 
 

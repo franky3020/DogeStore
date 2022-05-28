@@ -7,16 +7,19 @@
     "start": "npm run build && node -r dotenv/config ./build/index.js",
     "dev": "concurrently \"npm:watch\" \"npm:serve\"",
     "serve": "nodemon -r dotenv/config ./build/index.js",
-    "build": "tsc",
+    "build": "tsc && npm run copy-files",
     "watch": "tsc -w",
     "test_and_coverage": "jest --coverage --collectCoverageFrom='./src/**'",
-    "test": "jest"
+    "test": "jest",
+    "copy-files": "copyfiles -u 1 src/**/*.sql build/",
+    "init_db": "npm run build && node ./build/db/seed.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^27.5.1",
     "@types/node": "^17.0.35",
+    "copyfiles": "^2.4.1",
     "jest": "^28.1.0",
     "nodemon": "^2.0.16",
     "ts-jest": "^28.0.3",
