@@ -65,7 +65,7 @@ describe("Product CRUD", ()=>{
 
         await productDAO.update(p_updata);
 
-        let product: Product|null = await productDAO.findById(77);
+        let product: Product|null = await productDAO.findById(p1_init.id as number);
 
         if ( p_updata !== null && product !== null) {
             expect(product.id).toBe(p_updata.id);

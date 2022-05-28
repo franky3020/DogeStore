@@ -23,8 +23,8 @@ export default class ProductDAO {
 
                 if( product.id !== null ) {
 
-                    let sql = "INSERT INTO `Products`(`id`,`name`,`price`, `describe`)VALUES(?,?,?,?)";
-                    connection.query(sql, [product.id, product.name, product.price, product.describe], function (err, result) {
+                    let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
+                    connection.query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe], function (err, result) {
                         if (err) reject(err);
                         return resolve();
                     });
@@ -32,8 +32,8 @@ export default class ProductDAO {
 
                 } else {
 
-                    let sql = "INSERT INTO `Products`(`name`,`price`,`describe`)VALUES(?,?,?)";
-                    connection.query(sql, [product.name, product.price, product.describe], function (err, result) {
+                    let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
+                    connection.query(sql, [product.name, product.create_user_id, product.price, product.describe], function (err, result) {
                         if (err) reject(err);
                         return resolve();
                     });
@@ -50,10 +50,10 @@ export default class ProductDAO {
         
         let connection = this.connection;
 
-        let sql = "UPDATE `Products` SET `name` = ?, `price` = ?, `describe` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
+        let sql = "UPDATE `Products` SET `name` = ?, `create_user_id` = ?,`price` = ?, `describe` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
 
         return new Promise((resolve, reject) => {
-            connection.execute(sql, [ product.name, product.price, product.describe, product.id ], function (err, result) {
+            connection.execute(sql, [ product.name, product.create_user_id, product.price, product.describe, product.id ], function (err, result) {
                 if (err) throw err;
                 return resolve();
                 
