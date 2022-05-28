@@ -1,7 +1,6 @@
 
-import Product from "../entity/Product";
 import mysql from "mysql2";
-
+import User from "../entity/User";
 
 export default class UserDAO {
 
@@ -28,13 +27,7 @@ export default class UserDAO {
         });
     }
 
-
-
-
-
-
-
-    create(product: Product): Promise<void> {
+    create(user: User): Promise<void> {
         let connection = this.connection;
 
         return new Promise((resolve, reject) => {
@@ -43,10 +36,10 @@ export default class UserDAO {
 
                 if (err) throw err;
 
-                if( product.id !== null ) {
+                if( user.id !== null ) {
 
-                    let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
-                    connection.query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe], function (err, result) {
+                    let sql = "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
+                    connection.query(sql, [user.id, user.email, user.nickname, user.password], function (err, result) {
                         if (err) reject(err);
                         return resolve();
                     });
@@ -54,8 +47,8 @@ export default class UserDAO {
 
                 } else {
 
-                    let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
-                    connection.query(sql, [product.name, product.create_user_id, product.price, product.describe], function (err, result) {
+                    let sql = "INSERT INTO `User`(`email`,`nickname`,`password`)VALUES(?,?,?)";
+                    connection.query(sql, [user.email, user.nickname, user.password], function (err, result) {
                         if (err) reject(err);
                         return resolve();
                     });
@@ -68,14 +61,14 @@ export default class UserDAO {
         })
     }
 
-    update(product: Product): Promise<void> {
+    update(user: User): Promise<void> {
         
         let connection = this.connection;
 
-        let sql = "UPDATE `Products` SET `name` = ?, `create_user_id` = ?,`price` = ?, `describe` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
+        let sql = "UPDATE `User` SET `email` = ?, `nickname` = ?,`password` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
 
         return new Promise((resolve, reject) => {
-            connection.execute(sql, [ product.name, product.create_user_id, product.price, product.describe, product.id ], function (err, result) {
+            connection.execute(sql, [ user.email, user.nickname, user.password, user.id ], function (err, result) {
                 if (err) throw err;
                 return resolve();
                 
@@ -84,46 +77,46 @@ export default class UserDAO {
 
     }
 
-    findById(id: number): Promise<Product | null> {
+    findById(id: number): Promise<User | null> {
 
         let connection = this.connection;
 
-        let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
+        let sql = "SELECT * FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [id], function (err, result) {
                 if (err) throw err;
     
-                let products: Product[] = JSON.parse(JSON.stringify(result));
+                let users: User[] = JSON.parse(JSON.stringify(result));
 
-                if ( products.length === 0 ) {
+                if ( users.length === 0 ) {
                     return resolve(null);
                 }
 
-                let product = products[0];
+                let user = users[0];
                 
-                return resolve(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
+                return resolve(new User(user.id, user.email, user.nickname, user.password));
                 
             });
         });
 
     }
 
-    findAll(): Promise< Product[] > { 
+    findAll(): Promise< User[] > { 
 
-        let sql = "SELECT * FROM `Products`";
+        let sql = "SELECT * FROM `User`";
         let connection = this.connection;
-        let returnProducts: Product[] = [];
+        let returnUsers: User[] = [];
 
         return new Promise((resolve) => {
             connection.query(sql, function (err, result) {
                 if (err) throw err;
     
                 let jResult= JSON.parse(JSON.stringify(result));
-                for(const product of jResult as Product[]) {
-                    returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
+                for(const user of jResult as User[]) {
+                    returnUsers.push(new User(user.id, user.email, user.nickname, user.password));
                 }
-                return resolve(returnProducts);
+                return resolve(returnUsers);
                 
             });
         });
@@ -134,7 +127,7 @@ export default class UserDAO {
 
         let connection = this.connection;
 
-        let sql = "DELETE FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
+        let sql = "DELETE FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [ id ], function (err, result) {

@@ -7,7 +7,7 @@ import Product from "../../entity/Product";
 
 import {initAlltables} from "../../db/seed";
 
-let testDatabaseName = "testDatabase";
+let testDatabaseName = "testDatabase_product";
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
 let userDAO: UserDAO;
