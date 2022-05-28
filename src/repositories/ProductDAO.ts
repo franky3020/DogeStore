@@ -80,7 +80,7 @@ export default class ProductDAO {
 
                 let product = products[0];
                 
-                return resolve(new Product(product.id, product.name, product.price, product.describe, []));
+                return resolve(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
                 
             });
         });
@@ -99,7 +99,7 @@ export default class ProductDAO {
     
                 let jResult= JSON.parse(JSON.stringify(result));
                 for(const product of jResult as Product[]) {
-                    returnProducts.push(new Product(product.id, product.name, product.price, product.describe, []));
+                    returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
                 }
                 return resolve(returnProducts);
                 

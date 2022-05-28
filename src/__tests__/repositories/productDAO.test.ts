@@ -10,8 +10,8 @@ let productsSeed: ProductsSeed;
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
 
-const p1_init: Product = new Product(55, "p_1", 200, "p_d");
-const p2_init: Product = new Product(66, "p_2", 200, "p_d");
+const p1_init: Product = new Product(55, "p_1", 1, 200, "p_d");
+const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
 
 beforeAll(async () => {
     await deletesDatabase(testDatabaseName);
@@ -61,7 +61,7 @@ describe("Product CRUD", ()=>{
     
     test("update", async ()=> {
 
-        let p_updata: Product = new Product(p1_init.id, "updata", 200, "updata");
+        let p_updata: Product = new Product(p1_init.id, "updata", 5, 200, "updata");
 
         await productDAO.update(p_updata);
 
@@ -70,6 +70,7 @@ describe("Product CRUD", ()=>{
         if ( p_updata !== null && product !== null) {
             expect(product.id).toBe(p_updata.id);
             expect(product.name).toBe(p_updata.name);
+            expect(product.create_user_id).toBe(p_updata.create_user_id);
             expect(product.price).toBe(p_updata.price);
             expect(product.describe).toBe(p_updata.describe);
         }

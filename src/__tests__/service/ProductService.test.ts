@@ -33,7 +33,7 @@ describe("Product service", ()=>{
         let productService = ProductService.getInstance();
         productService.changeDBTo(testDatabaseName);
 
-        await productService.addProduct("test", 100, "yaya");
+        await productService.addProduct("test", 1, 100, "yaya");
         let products: Product[] = await productDAO.findAll();
 
         expect(products.length).toBe(1);

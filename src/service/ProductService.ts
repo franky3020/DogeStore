@@ -41,8 +41,8 @@ export default class ProductService { // 使用獨體
     }
 
 
-    async addProduct(name: string, price: number, describe: string, photos?: string[]) {
-        let product = new Product(null, name, price, describe, photos);
+    async addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]) {
+        let product = new Product(null, name, create_user_id, price, describe, photos);
         let productDAO = new ProductDAO(this.connection);
         await productDAO.create(product);
     }
