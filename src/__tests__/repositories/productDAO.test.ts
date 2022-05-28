@@ -3,10 +3,11 @@ import mysql from "mysql2";
 import { createNewDatabase, deletesDatabase } from "../../db/db";
 import Product from "../../entity/Product";
 
-import ProductsSeed from "../../db/ProductSeed";
+import SeedDBFromSQLFile from "../../db/SeedDBFromSQLfile";
+import path from "path";
 
 let testDatabaseName = "testDatabase";
-let productsSeed: ProductsSeed;
+// let productsSeed: ProductsSeed;
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
 
@@ -17,8 +18,9 @@ beforeAll(async () => {
     await deletesDatabase(testDatabaseName);
     connection = await createNewDatabase(testDatabaseName);
 
-    productsSeed = new ProductsSeed(connection);
-    await productsSeed.createTable();
+    // productsSeed = new ProductsSeed(connection);
+    let seedDBFromSQLFile = new SeedDBFromSQLFile(connection)
+    await seedDBFromSQLFile.createTable(path.join(__dirname, "../../db/Product.sql"));
 
     productDAO = new ProductDAO(connection);
 
