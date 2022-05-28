@@ -1,13 +1,12 @@
 import ProductDAO from "../../repositories/ProductDAO";
 import mysql from "mysql2";
-import { createNewDatabase, deletesDatabase } from "../../db/db";
+import { deletesDatabase } from "../../db/db";
 import Product from "../../entity/Product";
 
-import SeedDBFromSQLFile from "../../db/SeedDBFromSQLfile";
-import path from "path";
+
+import {initAlltables} from "../../db/seed";
 
 let testDatabaseName = "testDatabase";
-// let productsSeed: ProductsSeed;
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
 
@@ -15,13 +14,7 @@ const p1_init: Product = new Product(55, "p_1", 1, 200, "p_d");
 const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
 
 beforeAll(async () => {
-    await deletesDatabase(testDatabaseName);
-    connection = await createNewDatabase(testDatabaseName);
-
-    // productsSeed = new ProductsSeed(connection);
-    let seedDBFromSQLFile = new SeedDBFromSQLFile(connection)
-    await seedDBFromSQLFile.createTable(path.join(__dirname, "../../db/Product.sql"));
-
+    connection = await initAlltables(testDatabaseName);
     productDAO = new ProductDAO(connection);
 
     await productDAO.create(p1_init);

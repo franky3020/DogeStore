@@ -2,26 +2,19 @@
 
 
 import ProductService from "../../service/ProductService";
-import { createNewDatabase, deletesDatabase } from "../../db/db";
-// import ProductsSeed from "../../db/ProductSeed";
-import SeedDBFromSQLFile from "../../db/SeedDBFromSQLfile";
+import { deletesDatabase } from "../../db/db";
 
 import mysql from "mysql2";
 import ProductDAO from "../../repositories/ProductDAO";
 import Product from "../../entity/Product";
-import path from "path";
 
 const testDatabaseName = "testDB";
 let connection: mysql.Connection;
 let productDAO: ProductDAO;
+import {initAlltables} from "../../db/seed";
 
 beforeAll(async () => {
-    await deletesDatabase(testDatabaseName);
-    connection = await createNewDatabase(testDatabaseName);
-
-    let seedDBFromSQLFile = new SeedDBFromSQLFile(connection);
-    await seedDBFromSQLFile.createTable(path.join(__dirname, "../../db/Product.sql"));
-
+    connection = await initAlltables(testDatabaseName);
     productDAO = new ProductDAO(connection);
 });
 
