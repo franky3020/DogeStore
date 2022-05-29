@@ -17,7 +17,6 @@ beforeAll(async () => {
 
     userDAO = new UserDAO(connection);
 
-    // userDAO.easyCreate(1,"u_email", "franky", "ya");
     await userDAO.create(user_init_1);
     await userDAO.create(user_init_2);
 });

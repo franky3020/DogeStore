@@ -6,12 +6,14 @@ import Product from "../../entity/Product";
 
 
 import {initAlltables} from "../../db/seed";
+import User from "../../entity/User";
 
 let testDatabaseName = "testDatabase_product";
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
 let userDAO: UserDAO;
 
+const user_init = new User(1,"u_email", "franky", "ya");
 
 const p1_init: Product = new Product(55, "p_1", 1, 200, "p_d");
 const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
@@ -22,7 +24,8 @@ beforeAll(async () => {
 
     userDAO = new UserDAO(connection);
 
-    userDAO.easyCreate(1,"u_email", "franky", "ya");
+    userDAO.create(user_init);
+
     await productDAO.create(p1_init);
     await productDAO.create(p2_init);
 

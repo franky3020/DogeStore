@@ -9,11 +9,13 @@ import ProductDAO from "../../repositories/ProductDAO";
 import Product from "../../entity/Product";
 import {initAlltables} from "../../db/seed";
 import UserDAO from "../../repositories/UserDAO";
+import User from "../../entity/User";
 
 const testDatabaseName = "testDatabase_product_service";
 let connection: mysql.Connection;
 let productDAO: ProductDAO;
 
+const user_init = new User(1,"u_email", "franky", "ya");
 const product_init_1 = new Product(5, "product_init_1", 1, 100, "product_init_1");
 
 beforeAll(async () => {
@@ -22,7 +24,7 @@ beforeAll(async () => {
     productService.changeDBTo(testDatabaseName);
 
     let userDAO = new UserDAO(connection);
-    await userDAO.easyCreate(1,"u_email", "franky", "ya");  // 一定要先有user 因為外健限制
+    await userDAO.create(user_init);  // 一定要先有user 因為外健限制
 
     productDAO = new ProductDAO(connection);
     await productDAO.create(product_init_1);
