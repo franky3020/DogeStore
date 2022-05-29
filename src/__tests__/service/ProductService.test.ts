@@ -77,7 +77,7 @@ describe("Product service", ()=>{
         
         let products_json = await productService.findAllProduct();
 
-        let product_length = Object.keys(products_json).length;
+        let product_length = products_json.length;
         let actual_length = 2;
         expect(product_length).toEqual(actual_length);
 

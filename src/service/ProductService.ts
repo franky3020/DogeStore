@@ -64,7 +64,7 @@ export default class ProductService { // 使用獨體
 
     }
 
-    findAllProduct(): Promise<object> {
+    findAllProduct(): Promise<[]> {
         return new Promise(async (resolve)=>{
             let productDAO = new ProductDAO(this.connection);
             let products: Product[]= await productDAO.findAll();
