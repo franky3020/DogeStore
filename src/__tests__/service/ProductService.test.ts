@@ -14,11 +14,18 @@ const testDatabaseName = "testDatabase_product_service";
 let connection: mysql.Connection;
 let productDAO: ProductDAO;
 
+const product_init_1 = new Product(5, "product_init_1", 1, 100, "product_init_1");
+
 beforeAll(async () => {
     connection = await initAlltables(testDatabaseName);
-    productDAO = new ProductDAO(connection);
+    let productService = ProductService.getInstance();
+    productService.changeDBTo(testDatabaseName);
+
     let userDAO = new UserDAO(connection);
-    userDAO.easyCreate(1,"u_email", "franky", "ya");
+    await userDAO.easyCreate(1,"u_email", "franky", "ya");  // 一定要先有user 因為外健限制
+
+    productDAO = new ProductDAO(connection);
+    await productDAO.create(product_init_1);
 
 });
 
@@ -34,23 +41,13 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
 describe("Product service", ()=>{
     test("addProduct", async () => {
         let productService = ProductService.getInstance();
-        productService.changeDBTo(testDatabaseName);
-
         
         const product_1 = new Product(null, "test", 1, 100, "yaya");
         await productService.addProduct(product_1.name, product_1.create_user_id, product_1.price, product_1.describe);
         let products: Product[] = await productDAO.findAll();
 
-
-        expect(products.length).toBe(1);
-
-        if( products.length === 1 ) {
-            let a_product = products[0];
-            product_1.id = a_product.id; // excluse test id
-
-            expect(a_product).not.toBeNull();
-            expect(a_product).toEqual(product_1)
-        }
+        let actual_length = 2;
+        expect(products.length).toBe(actual_length); // 因初始化已經有一個了
     });
 
 
@@ -60,4 +57,28 @@ describe("Product service", ()=>{
 
         expect(Object.is(productService, productService2)).toBe(true)
     });
+
+
+    test("findProductById", async () => {
+        let productService = ProductService.getInstance();
+        
+        let product_json = await productService.findProductById(product_init_1.id as number);
+
+        let actual_json = JSON.parse(JSON.stringify(product_init_1));
+
+        expect(product_json).toEqual(actual_json);
+        
+    });
+
+    test("findProductById", async () => {
+        let productService = ProductService.getInstance();
+        
+        let products_json = await productService.findAllProduct();
+
+        let product_length = Object.keys(products_json).length;
+        let actual_length = 2;
+        expect(product_length).toEqual(actual_length);
+
+    });
+    
 });

@@ -10,7 +10,7 @@ export default class ProductService { // 使用獨體
 
     connection :mysql.Connection;
 
-    static instance :ProductService;
+    private static instance :ProductService;
 
     private constructor() {
         this.connection = getNewConnection();
@@ -47,6 +47,33 @@ export default class ProductService { // 使用獨體
             resolve();
         })
         
+    }
+
+    findProductById(id: number): Promise<object> {
+        return new Promise(async (resolve)=>{
+            let productDAO = new ProductDAO(this.connection);
+            let product: Product|null= await productDAO.findById(id);
+
+            let product_json ={};
+            if(product) {
+                product_json = JSON.parse(JSON.stringify(product));
+            }
+
+            resolve(product_json);
+        })
+
+    }
+
+    findAllProduct(): Promise<object> {
+        return new Promise(async (resolve)=>{
+            let productDAO = new ProductDAO(this.connection);
+            let products: Product[]= await productDAO.findAll();
+           
+            let products_json = JSON.parse(JSON.stringify(products));
+
+            resolve(products_json);
+        })
+
     }
 
 
