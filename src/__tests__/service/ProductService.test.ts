@@ -10,7 +10,7 @@ import Product from "../../entity/Product";
 import {initAlltables} from "../../db/seed";
 import UserDAO from "../../repositories/UserDAO";
 
-const testDatabaseName = "testDB";
+const testDatabaseName = "testDatabase_product_service";
 let connection: mysql.Connection;
 let productDAO: ProductDAO;
 
@@ -29,25 +29,25 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
 
 
 describe("Product service", ()=>{
-    test("first", async () => {
+    test("addProduct", async () => {
         let productService = ProductService.getInstance();
         productService.changeDBTo(testDatabaseName);
 
         
-        await productService.addProduct("test", 1, 100, "yaya");
+        const product_1 = new Product(null, "test", 1, 100, "yaya");
+        await productService.addProduct(product_1.name, product_1.create_user_id, product_1.price, product_1.describe);
         let products: Product[] = await productDAO.findAll();
+
 
         expect(products.length).toBe(1);
 
         if( products.length === 1 ) {
             let a_product = products[0];
-            expect(a_product.name).toBe("test");
-            expect(a_product.price).toBe(100);
-            expect(a_product.describe).toBe("yaya");
+            product_1.id = a_product.id; // excluse test id
+
+            expect(a_product).not.toBeNull();
+            expect(a_product).toEqual(product_1)
         }
-
-        productService.closeDB();
-
-
+        productService.closeDB(); // 要注意
     });
 });
