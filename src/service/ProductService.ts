@@ -10,22 +10,20 @@ export default class ProductService { // 使用獨體
 
     connection :mysql.Connection;
 
-    static notUseInstance :boolean = true;
+    static instance :ProductService;
 
-    constructor() {
-
-        if(ProductService.notUseInstance) {
-            throw new Error("ProductService need to use getInstance()");
-        }
-
+    private constructor() {
         this.connection = getNewConnection();
         
     }
 
     static getInstance() {
-        ProductService.notUseInstance = false;
 
-        return new ProductService();
+        if( typeof ProductService.instance === "undefined" ) {
+            ProductService.instance = new ProductService();
+        }
+
+        return ProductService.instance;
     }
 
     changeDBTo(dbName: string) {
@@ -41,10 +39,14 @@ export default class ProductService { // 使用獨體
     }
 
 
-    async addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]) {
-        let product = new Product(null, name, create_user_id, price, describe, photos);
-        let productDAO = new ProductDAO(this.connection);
-        await productDAO.create(product);
+    addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]): Promise<void> {
+        return new Promise(async (resolve)=>{
+            let product = new Product(null, name, create_user_id, price, describe, photos);
+            let productDAO = new ProductDAO(this.connection);
+            await productDAO.create(product);
+            resolve();
+        })
+        
     }
 
 

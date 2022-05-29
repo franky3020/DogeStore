@@ -24,6 +24,9 @@ beforeAll(async () => {
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
     await deletesDatabase(testDatabaseName);
+    let productService = ProductService.getInstance();
+    productService.closeDB();
+
     connection.end();
 });
 
@@ -48,6 +51,13 @@ describe("Product service", ()=>{
             expect(a_product).not.toBeNull();
             expect(a_product).toEqual(product_1)
         }
-        productService.closeDB(); // 要注意
+    });
+
+
+    test("is Singleton", ()=>{
+        let productService = ProductService.getInstance();
+        let productService2 = ProductService.getInstance();
+
+        expect(Object.is(productService, productService2)).toBe(true)
     });
 });
