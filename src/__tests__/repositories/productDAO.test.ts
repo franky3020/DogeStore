@@ -6,12 +6,14 @@ import Product from "../../entity/Product";
 
 
 import {initAlltables} from "../../db/seed";
+import User from "../../entity/User";
 
 let testDatabaseName = "testDatabase_product";
 let productDAO: ProductDAO;
 let connection: mysql.Connection;
 let userDAO: UserDAO;
 
+const user_init = new User(1,"u_email", "franky", "ya");
 
 const p1_init: Product = new Product(55, "p_1", 1, 200, "p_d");
 const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
@@ -22,7 +24,8 @@ beforeAll(async () => {
 
     userDAO = new UserDAO(connection);
 
-    userDAO.easyCreate(1,"u_email", "franky", "ya");
+    userDAO.create(user_init);
+
     await productDAO.create(p1_init);
     await productDAO.create(p2_init);
 
@@ -37,13 +40,11 @@ describe("Product CRUD", ()=>{
 
     test("find p1", async ()=> {
 
-        let p1: Product|null = await productDAO.findById(1);
+        let p1: Product|null = await productDAO.findById(p1_init.id as number);
 
+        expect(p1).not.toBeNull();
         if ( p1 !== null ) {
-            expect(p1.id).toEqual(p1_init.id);
-            expect(p1.name).toEqual(p1_init.name);
-            expect(p1.price).toEqual(p1_init.price);
-            expect(p1.describe).toEqual(p1_init.describe);
+            expect(p1).toEqual(p1_init);
         }
         
 
@@ -68,12 +69,9 @@ describe("Product CRUD", ()=>{
 
         let product: Product|null = await productDAO.findById(p1_init.id as number);
 
+        expect(product).not.toBeNull();
         if ( p_updata !== null && product !== null) {
-            expect(product.id).toBe(p_updata.id);
-            expect(product.name).toBe(p_updata.name);
-            expect(product.create_user_id).toBe(p_updata.create_user_id);
-            expect(product.price).toBe(p_updata.price);
-            expect(product.describe).toBe(p_updata.describe);
+            expect(product).toEqual(p_updata);
         }
 
         await productDAO.update(p1_init);

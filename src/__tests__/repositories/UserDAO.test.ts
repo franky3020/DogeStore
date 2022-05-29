@@ -5,7 +5,7 @@ import { deletesDatabase } from "../../db/db";
 import {initAlltables} from "../../db/seed";
 import User from "../../entity/User";
 
-let testDatabaseName = "testDatabase";
+let testDatabaseName = "testDatabase_user";
 let connection: mysql.Connection;
 let userDAO: UserDAO;
 
@@ -17,7 +17,6 @@ beforeAll(async () => {
 
     userDAO = new UserDAO(connection);
 
-    // userDAO.easyCreate(1,"u_email", "franky", "ya");
     await userDAO.create(user_init_1);
     await userDAO.create(user_init_2);
 });

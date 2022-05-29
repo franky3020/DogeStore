@@ -10,23 +10,6 @@ export default class UserDAO {
         this.connection = connection;
     }
 
-    easyCreate(id: number,email: string,nickname: string, password: string): Promise<void> {
-        let connection = this.connection;
-
-        return new Promise((resolve, reject) => {
-
-            connection.connect(function (err) {
-                if (err) return reject(err);
-
-                let sql = "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
-                connection.query(sql, [id, email, nickname, password], function (err, result) {
-                    if (err) reject(err);
-                    return resolve();
-                });
-            });
-        });
-    }
-
     create(user: User): Promise<void> {
         let connection = this.connection;
 
