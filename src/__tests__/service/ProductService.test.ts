@@ -10,6 +10,8 @@ import Product from "../../entity/Product";
 import {initAlltables} from "../../db/seed";
 import UserDAO from "../../repositories/UserDAO";
 import User from "../../entity/User";
+import MySQLConnectionPool from "../../db/MySQLConnectionPool";
+
 
 const testDatabaseName = "testDatabase_product_service";
 let connection: mysql.Connection;
@@ -23,10 +25,12 @@ beforeAll(async () => {
     let productService = ProductService.getInstance();
     productService.changeDBTo(testDatabaseName);
 
-    let userDAO = new UserDAO(connection);
+    let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
+
+    let userDAO = new UserDAO(connectionPool);
     await userDAO.create(user_init);  // 一定要先有user 因為外健限制
 
-    productDAO = new ProductDAO(connection);
+    productDAO = new ProductDAO(connectionPool);
     await productDAO.create(product_init_1);
 
 });

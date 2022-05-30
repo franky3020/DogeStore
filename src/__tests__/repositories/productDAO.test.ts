@@ -7,6 +7,8 @@ import Product from "../../entity/Product";
 
 import {initAlltables} from "../../db/seed";
 import User from "../../entity/User";
+import MySQLConnectionPool from "../../db/MySQLConnectionPool";
+
 
 let testDatabaseName = "testDatabase_product";
 let productDAO: ProductDAO;
@@ -20,9 +22,13 @@ const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
 
 beforeAll(async () => {
     connection = await initAlltables(testDatabaseName);
-    productDAO = new ProductDAO(connection);
 
-    userDAO = new UserDAO(connection);
+    let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
+
+
+    productDAO = new ProductDAO(connectionPool);
+
+    userDAO = new UserDAO(connectionPool);
 
     await userDAO.create(user_init);
 

@@ -5,9 +5,9 @@ import mysql from "mysql2";
 
 export default class ProductDAO {
 
-    connection: mysql.Connection;
+    connection: mysql.Pool;
 
-    constructor(connection: mysql.Connection) {
+    constructor(connection: mysql.Pool) {
         this.connection = connection;
     }
 
@@ -17,31 +17,26 @@ export default class ProductDAO {
 
         return new Promise((resolve, reject) => {
 
-            connection.connect(function (err) {
 
-                if (err) throw err;
+            if( product.id !== null ) {
 
-                if( product.id !== null ) {
-
-                    let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
-                    connection.query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                        if (err) reject(err);
-                        return resolve();
-                    });
+                let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
+                connection.query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe], function (err, result) {
+                    if (err) reject(err);
+                    return resolve();
+                });
 
 
-                } else {
+            } else {
 
-                    let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
-                    connection.query(sql, [product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                        if (err) reject(err);
-                        return resolve();
-                    });
-                }
+                let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
+                connection.query(sql, [product.name, product.create_user_id, product.price, product.describe], function (err, result) {
+                    if (err) reject(err);
+                    return resolve();
+                });
+            }
         
                 
-
-            });
 
         })
     }

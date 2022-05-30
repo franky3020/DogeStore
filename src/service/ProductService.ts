@@ -4,17 +4,17 @@ import { getNewConnection } from "../db/db";
 import ProductDAO from "../repositories/ProductDAO";
 import Product from "../entity/Product";
 import mysql from "mysql2";
+import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
 
 export default class ProductService { // 使用獨體
 
-    connection :mysql.Connection;
+    connection :mysql.Pool;
 
     private static instance :ProductService;
 
     private constructor() {
-        this.connection = getNewConnection();
-        
+        this.connection = MySQLConnectionPool.getPool();
     }
 
     static getInstance() {
@@ -27,11 +27,7 @@ export default class ProductService { // 使用獨體
     }
 
     changeDBTo(dbName: string) {
-        let oldConnection = this.connection;
-        
-        this.connection = getNewConnection(dbName);
-
-        oldConnection.end();
+        this.connection = MySQLConnectionPool.getPool(dbName);
     }
 
     closeDB() {// Todo 這要注意 當其中一個 Service 呼叫 則會出錯

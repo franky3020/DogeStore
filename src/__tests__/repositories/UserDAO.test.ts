@@ -4,6 +4,7 @@ import { deletesDatabase } from "../../db/db";
 
 import {initAlltables} from "../../db/seed";
 import User from "../../entity/User";
+import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 
 let testDatabaseName = "testDatabase_user";
 let connection: mysql.Connection;
@@ -14,8 +15,8 @@ const user_init_2 = new User(7, "test@test", "user_name", "yaya");
 
 beforeAll(async () => {
     connection = await initAlltables(testDatabaseName);
-
-    userDAO = new UserDAO(connection);
+    let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
+    userDAO = new UserDAO(connectionPool);
 
     await userDAO.create(user_init_1);
     await userDAO.create(user_init_2);

@@ -14,7 +14,7 @@ beforeAll(async () => {
     connection = await initAlltables(testDatabaseName);
     connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
 
-    let userDAO = new UserDAO(connection);
+    let userDAO = new UserDAO(connectionPool);
 
     const user_init = new User(1, "test", "test", "test");
     await userDAO.create(user_init);
