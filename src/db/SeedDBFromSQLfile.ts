@@ -13,17 +13,17 @@ export default class SeedDBFromSQLFile {
     createTable(sqlFilePath: string) :Promise<void> {
         let connection = this.connection;
 
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve, reject) => {
 
             fs.readFile(sqlFilePath, 'utf8', (err, data) => {
                 if (err) {
-                    throw new Error("file can't read");
+                    reject(new Error("file can't read"));
                 }
                 
                 let sql = data;
                 
                 connection.query(sql, function (err, result) {
-                    if (err) throw err;
+                    if (err) return reject(err);
                     return resolve(result as any);
                 });
             });
@@ -35,11 +35,11 @@ export default class SeedDBFromSQLFile {
     dropTable(tableName: string): Promise<void> {
         let connection = this.connection;
         
-        return new Promise( (resolve) => {
+        return new Promise( (resolve, reject) => {
 
             var sql = "DROP TABLE IF EXISTS `" + tableName + "`";
             connection.query(sql, function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
                 return resolve(result as any);
             });
             

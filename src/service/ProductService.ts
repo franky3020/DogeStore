@@ -30,11 +30,6 @@ export default class ProductService { // 使用獨體
         this.connection = MySQLConnectionPool.getPool(dbName);
     }
 
-    closeDB() {// Todo 這要注意 當其中一個 Service 呼叫 則會出錯
-        // this.connection.end();
-    }
-
-
     async addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]) {
         let product = new Product(null, name, create_user_id, price, describe, photos);
         let productDAO = new ProductDAO(this.connection);
