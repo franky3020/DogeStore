@@ -35,61 +35,32 @@ export default class ProductService { // 使用獨體
     }
 
 
-    addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]): Promise<void> {
-        return new Promise(async (resolve, reject)=>{
-            let product = new Product(null, name, create_user_id, price, describe, photos);
+    async addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]) {
+        let product = new Product(null, name, create_user_id, price, describe, photos);
+        let productDAO = new ProductDAO(this.connection);
+        await productDAO.create(product);
+    }
+
+    async findProductById(id: number): Promise<object> {
+
+
+        let productDAO = new ProductDAO(this.connection);
+        let product: Product|null= await productDAO.findById(id);
+
+        let product_json ={};
+        if(product) {
+            product_json = JSON.parse(JSON.stringify(product));
+        }
+
+        return product_json;
+    }
+
+    async findAllProduct(): Promise<[]> {
             let productDAO = new ProductDAO(this.connection);
-
-            try {
-                await productDAO.create(product);
-                return resolve();
-            } catch(err) {
-                return reject(err);
-            }
-
-
-        })
+            let products: Product[]= await productDAO.findAll();
         
-    }
-
-    findProductById(id: number): Promise<object> {
-        return new Promise(async (resolve, reject)=>{
-            let productDAO = new ProductDAO(this.connection);
-
-
-            try {
-                let product: Product|null= await productDAO.findById(id);
-
-                let product_json ={};
-                if(product) {
-                    product_json = JSON.parse(JSON.stringify(product));
-                }
-
-                return resolve(product_json);
-            } catch(err) {
-                return reject(err);
-            }
-            
-        })
-
-    }
-
-    findAllProduct(): Promise<[]> {
-        return new Promise(async (resolve, reject)=>{
-
-            try {
-                let productDAO = new ProductDAO(this.connection);
-                let products: Product[]= await productDAO.findAll();
-            
-                let products_json = JSON.parse(JSON.stringify(products));
-
-                return resolve(products_json);
-            } catch(err) {
-                return reject(err);
-            }
-            
-        })
-
+            let products_json = JSON.parse(JSON.stringify(products));
+            return products_json;
     }
 
 

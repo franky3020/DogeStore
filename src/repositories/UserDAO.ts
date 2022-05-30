@@ -13,13 +13,13 @@ export default class UserDAO {
     create(user: User): Promise<void> {
         let connection = this.connection;
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
 
             if( user.id !== null ) {
 
                 let sql = "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
                 connection.query(sql, [user.id, user.email, user.nickname, user.password], function (err, result) {
-                    if (err) return reject(err);
+                    if (err) throw err;
                     return resolve();
                 });
 
@@ -28,7 +28,7 @@ export default class UserDAO {
 
                 let sql = "INSERT INTO `User`(`email`,`nickname`,`password`)VALUES(?,?,?)";
                 connection.query(sql, [user.email, user.nickname, user.password], function (err, result) {
-                    if (err) return reject(err);
+                    if (err) throw err;
                     return resolve();
                 });
             }
@@ -43,9 +43,9 @@ export default class UserDAO {
 
         let sql = "UPDATE `User` SET `email` = ?, `nickname` = ?,`password` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.execute(sql, [ user.email, user.nickname, user.password, user.id ], function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
                 return resolve();
                 
             });
@@ -59,9 +59,9 @@ export default class UserDAO {
 
         let sql = "SELECT * FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.execute(sql, [id], function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
     
                 let users: User[] = JSON.parse(JSON.stringify(result));
 
@@ -84,9 +84,9 @@ export default class UserDAO {
         let connection = this.connection;
         let returnUsers: User[] = [];
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.query(sql, function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
     
                 let jResult= JSON.parse(JSON.stringify(result));
                 for(const user of jResult as User[]) {
@@ -105,9 +105,9 @@ export default class UserDAO {
 
         let sql = "DELETE FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.execute(sql, [ id ], function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
                 return resolve();
                 
             });

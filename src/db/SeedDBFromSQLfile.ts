@@ -13,26 +13,20 @@ export default class SeedDBFromSQLFile {
     createTable(sqlFilePath: string) :Promise<void> {
         let connection = this.connection;
 
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>((resolve) => {
 
-            // connection.connect(function (err) {
-            //     if (err) return reject(err);
-              
-
-                fs.readFile(sqlFilePath, 'utf8', (err, data) => {
-                    if (err) {
-                        console.error(err);
-                        return reject(new Error("file can't read"));
-                    }
-                    
-                    let sql = data;
-                    
-                    connection.query(sql, function (err, result) {
-                        if (err) return reject(err);
-                        return resolve(result as any);
-                    });
+            fs.readFile(sqlFilePath, 'utf8', (err, data) => {
+                if (err) {
+                    throw new Error("file can't read");
+                }
+                
+                let sql = data;
+                
+                connection.query(sql, function (err, result) {
+                    if (err) throw err;
+                    return resolve(result as any);
                 });
-            // });
+            });
 
         });
 
@@ -41,17 +35,14 @@ export default class SeedDBFromSQLFile {
     dropTable(tableName: string): Promise<void> {
         let connection = this.connection;
         
-        return new Promise( (resolve, reject) => {
-            // connection.connect(function (err) {
+        return new Promise( (resolve) => {
 
-                // if (err) throw err;
-        
-                var sql = "DROP TABLE IF EXISTS `" + tableName + "`";
-                connection.query(sql, function (err, result) {
-                    if (err) return reject(err);
-                    return resolve(result as any);
-                });
-            // });
+            var sql = "DROP TABLE IF EXISTS `" + tableName + "`";
+            connection.query(sql, function (err, result) {
+                if (err) throw err;
+                return resolve(result as any);
+            });
+            
         })
     }
 

@@ -17,7 +17,6 @@ export default class ProductDAO {
 
         return new Promise((resolve, reject) => {
 
-
             if( product.id !== null ) {
 
                 let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
@@ -35,8 +34,6 @@ export default class ProductDAO {
                     return resolve();
                 });
             }
-        
-                
 
         })
     }
@@ -47,9 +44,9 @@ export default class ProductDAO {
 
         let sql = "UPDATE `Products` SET `name` = ?, `create_user_id` = ?,`price` = ?, `describe` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.execute(sql, [ product.name, product.create_user_id, product.price, product.describe, product.id ], function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
                 return resolve();
                 
             });
@@ -63,9 +60,9 @@ export default class ProductDAO {
 
         let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.execute(sql, [id], function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
     
                 let products: Product[] = JSON.parse(JSON.stringify(result));
 
@@ -88,9 +85,9 @@ export default class ProductDAO {
         let connection = this.connection;
         let returnProducts: Product[] = [];
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.query(sql, function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
     
                 let jResult= JSON.parse(JSON.stringify(result));
                 for(const product of jResult as Product[]) {
@@ -109,9 +106,9 @@ export default class ProductDAO {
 
         let sql = "DELETE FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             connection.execute(sql, [ id ], function (err, result) {
-                if (err) return reject(err);
+                if (err) throw err;
                 return resolve();
                 
             });

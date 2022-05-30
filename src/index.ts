@@ -17,7 +17,13 @@ import { validate, ValidationError, Joi } from "express-validation";
 
 const productValidation = {
     body: Joi.object({
-      name: Joi.string()
+        name: Joi.string()
+        .required(),
+        create_user_id: Joi.number()
+        .required(),
+        price: Joi.number()
+        .required(),
+        describe: Joi.string()
         .required()
     }),
   }
