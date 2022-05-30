@@ -1,11 +1,4 @@
 
-// connection.connect( (err: any) => {
-//     if(err) {
-//         console.log("error");
-//     }
-// });
-
-// connection.end();
 
 import express, { Express, Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
@@ -13,6 +6,7 @@ dotenv.config();
 
 import ProductCtrl from "./controller/ProductCtrl";
 import {initAlltables, insertFakeData} from "./db/seed";
+import MySQLConnectionPool from "./db/MySQLConnectionPool";
 
 const app: Express = express();
 app.use(express.json());
@@ -41,6 +35,15 @@ app.use(function( err: any, req: Request, res: Response, next: NextFunction) {
     return res.status(500).json(err)
 })
 
+
+app.get('/stop', function(req, res){
+  MySQLConnectionPool.endAllPool();
+  res.send("stop");
+
+  process.exit();
+});
+
+
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
     res.status(404).send('nothing');
@@ -49,7 +52,11 @@ app.get('*', function(req, res){
 
 app.listen(port, async () => {
 
-  await initAlltables(process.env.DB_NAME as string);
+  let con = await initAlltables(process.env.DB_NAME as string);
+  con.end();
   await insertFakeData(process.env.DB_NAME as string);
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
+
+
+

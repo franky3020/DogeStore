@@ -26,7 +26,7 @@ export function initAlltables(databaseName: string): Promise<mysql.Connection> {
     });
 }
 
-export function insertFakeData(databaseName: string): Promise<mysql.Connection> {
+export function insertFakeData(databaseName: string): Promise<void> {
 
     return new Promise(async (resolve) => {
 
@@ -46,14 +46,15 @@ export function insertFakeData(databaseName: string): Promise<mysql.Connection> 
 
         let productDAO = new ProductDAO(connectPool);
         
-        Promise.all([
+        await Promise.all([
             productDAO.create(product_init_1),
             productDAO.create(product_init_2),
             productDAO.create(product_init_3),
-        ])
-        
+        ]);
 
-        return resolve(connection);
+        connection.end();
+
+        return resolve();
 
     });
 }

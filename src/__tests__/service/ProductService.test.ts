@@ -41,6 +41,8 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
     productService.closeDB();
 
     connection.end();
+    MySQLConnectionPool.endPool(testDatabaseName);
+
 });
 
 

@@ -31,7 +31,7 @@ export default class MySQLConnectionPool {
                 port: process.env.DB_PORT as unknown as number,
                 database: databaseName,
                 waitForConnections: true,
-                connectionLimit: 10,
+                connectionLimit: 15,
                 queueLimit: 0
             });
 
@@ -44,5 +44,10 @@ export default class MySQLConnectionPool {
             MySQLConnectionPool.existDatabasePool[key].end();
             delete MySQLConnectionPool.existDatabasePool[key];
         });
+    }
+
+    static endPool(databaseName: string) {
+        MySQLConnectionPool.existDatabasePool[databaseName].end();
+        delete MySQLConnectionPool.existDatabasePool[databaseName];
     }
 }

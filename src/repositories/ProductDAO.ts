@@ -22,7 +22,7 @@ export default class ProductDAO {
 
                 let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
                 connection.query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                    if (err) reject(err);
+                    if (err) return reject(err);
                     return resolve();
                 });
 
@@ -31,7 +31,7 @@ export default class ProductDAO {
 
                 let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
                 connection.query(sql, [product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                    if (err) reject(err);
+                    if (err) return reject(err);
                     return resolve();
                 });
             }
@@ -49,7 +49,7 @@ export default class ProductDAO {
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [ product.name, product.create_user_id, product.price, product.describe, product.id ], function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
                 return resolve();
                 
             });
@@ -65,7 +65,7 @@ export default class ProductDAO {
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [id], function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
     
                 let products: Product[] = JSON.parse(JSON.stringify(result));
 
@@ -88,9 +88,9 @@ export default class ProductDAO {
         let connection = this.connection;
         let returnProducts: Product[] = [];
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             connection.query(sql, function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
     
                 let jResult= JSON.parse(JSON.stringify(result));
                 for(const product of jResult as Product[]) {
@@ -111,7 +111,7 @@ export default class ProductDAO {
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [ id ], function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
                 return resolve();
                 
             });

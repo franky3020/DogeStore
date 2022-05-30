@@ -25,6 +25,7 @@ beforeAll(async () => {
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
     await deletesDatabase(testDatabaseName);
     connection.end();
+    MySQLConnectionPool.endPool(testDatabaseName);
 });
 
 describe("User CRUD", ()=>{
