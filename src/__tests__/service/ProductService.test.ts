@@ -14,14 +14,13 @@ import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 
 
 const testDatabaseName = "testDatabase_product_service";
-let connection: mysql.Connection;
 let productDAO: ProductDAO;
 
 const user_init = new User(1,"u_email", "franky", "ya");
 const product_init_1 = new Product(5, "product_init_1", 1, 100, "product_init_1");
 
 beforeAll(async () => {
-    connection = await initAlltables(testDatabaseName);
+    await initAlltables(testDatabaseName);
     let productService = ProductService.getInstance();
     productService.changeDBTo(testDatabaseName);
 
@@ -39,8 +38,6 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
     await deletesDatabase(testDatabaseName);
     let productService = ProductService.getInstance();
     productService.closeDB();
-
-    connection.end();
     MySQLConnectionPool.endPool(testDatabaseName);
 
 });

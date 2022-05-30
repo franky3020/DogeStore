@@ -52,8 +52,7 @@ app.get('*', function(req, res){
 
 app.listen(port, async () => {
 
-  let con = await initAlltables(process.env.DB_NAME as string);
-  con.end();
+  await initAlltables(process.env.DB_NAME as string);
   await insertFakeData(process.env.DB_NAME as string);
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });

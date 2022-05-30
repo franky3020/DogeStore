@@ -4,9 +4,9 @@ import fs from "fs";
 
 export default class SeedDBFromSQLFile {
 
-    connection: mysql.Connection;
+    connection: mysql.Pool;
     
-    constructor(connection: mysql.Connection) {
+    constructor(connection: mysql.Pool) {
         this.connection = connection;
     }
 
@@ -15,8 +15,8 @@ export default class SeedDBFromSQLFile {
 
         return new Promise<void>((resolve, reject) => {
 
-            connection.connect(function (err) {
-                if (err) return reject(err);
+            // connection.connect(function (err) {
+            //     if (err) return reject(err);
               
 
                 fs.readFile(sqlFilePath, 'utf8', (err, data) => {
@@ -32,7 +32,7 @@ export default class SeedDBFromSQLFile {
                         return resolve(result as any);
                     });
                 });
-            });
+            // });
 
         });
 
@@ -41,17 +41,17 @@ export default class SeedDBFromSQLFile {
     dropTable(tableName: string): Promise<void> {
         let connection = this.connection;
         
-        return new Promise( (resolve) => {
-            connection.connect(function (err) {
+        return new Promise( (resolve, reject) => {
+            // connection.connect(function (err) {
 
-                if (err) throw err;
+                // if (err) throw err;
         
                 var sql = "DROP TABLE IF EXISTS `" + tableName + "`";
                 connection.query(sql, function (err, result) {
-                    if (err) throw err;
+                    if (err) return reject(err);
                     return resolve(result as any);
                 });
-            });
+            // });
         })
     }
 

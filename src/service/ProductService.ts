@@ -1,6 +1,5 @@
 
 
-import { getNewConnection } from "../db/db";
 import ProductDAO from "../repositories/ProductDAO";
 import Product from "../entity/Product";
 import mysql from "mysql2";

@@ -7,11 +7,10 @@ import User from "../../entity/User";
 
 
 let testDatabaseName = "test_MySQLConnectionPool";
-let connection: mysql.Connection;
 let connectionPool: mysql.Pool;
 
 beforeAll(async () => {
-    connection = await initAlltables(testDatabaseName);
+    await initAlltables(testDatabaseName);
     connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
 
     let userDAO = new UserDAO(connectionPool);
@@ -23,7 +22,6 @@ beforeAll(async () => {
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
     await deletesDatabase(testDatabaseName);
-    connection.end();
     MySQLConnectionPool.endPool(testDatabaseName);
 
 });

@@ -10,18 +10,20 @@ import UserDAO from "../repositories/UserDAO";
 import ProductDAO from "../repositories/ProductDAO";
 import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
-export function initAlltables(databaseName: string): Promise<mysql.Connection> {
+export function initAlltables(databaseName: string): Promise<void> {
 
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
 
         await deletesDatabase(databaseName);
-        let connection: mysql.Connection = await createNewDatabase(databaseName);
+        await createNewDatabase(databaseName);
+
+        let connectionPool = MySQLConnectionPool.getPool(databaseName);
     
-        let seedDBFromSQLFile = new SeedDBFromSQLFile(connection)
+        let seedDBFromSQLFile = new SeedDBFromSQLFile(connectionPool)
         await seedDBFromSQLFile.createTable(path.join(__dirname, "./User.sql"));
         await seedDBFromSQLFile.createTable(path.join(__dirname, "./Product.sql"));
 
-        return resolve(connection);
+        return resolve();
 
     });
 }
@@ -30,7 +32,7 @@ export function insertFakeData(databaseName: string): Promise<void> {
 
     return new Promise(async (resolve) => {
 
-        let connection: mysql.Connection = await createNewDatabase(databaseName); // Todo  這裡有錯 已經存在的就不會 create了
+        await createNewDatabase(databaseName); // Todo  這裡有錯 已經存在的就不會 create了
 
         let connectPool = MySQLConnectionPool.getPool(databaseName);
 
@@ -52,17 +54,15 @@ export function insertFakeData(databaseName: string): Promise<void> {
             productDAO.create(product_init_3),
         ]);
 
-        connection.end();
-
         return resolve();
 
     });
 }
 
 if (require.main === module) {
-    initAlltables("db_create_from_seed").then((connection)=>{
-        connection.end();// 有end, 程式才會正常結束 重要
+    initAlltables("db_create_from_seed").then(()=>{
         console.log("over")
+        MySQLConnectionPool.endPool("db_create_from_seed");
     });
 } 
 
