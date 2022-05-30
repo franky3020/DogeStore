@@ -24,7 +24,7 @@ beforeAll(async () => {
 
     userDAO = new UserDAO(connection);
 
-    userDAO.create(user_init);
+    await userDAO.create(user_init);
 
     await productDAO.create(p1_init);
     await productDAO.create(p2_init);

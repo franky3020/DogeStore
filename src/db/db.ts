@@ -23,6 +23,30 @@ export function getNewConnection(databaseName?: string): mysql.Connection {
 
 }
 
+export function useConnectionPool(databaseName?: string) {
+
+  let dbName: string;
+  if( databaseName ) {
+    dbName = databaseName;
+  } else {
+    dbName = process.env.DB_NAME as string;
+  }
+
+  const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD,
+    port: process.env.DB_PORT as unknown as number,
+    database: dbName,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+  });
+
+}
+
+
+
 
 export function createNewDatabase(databaseName: string): Promise<mysql.Connection> { // return newConnection
 
