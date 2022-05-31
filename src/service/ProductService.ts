@@ -1,20 +1,19 @@
 
 
-import { getNewConnection } from "../db/db";
 import ProductDAO from "../repositories/ProductDAO";
 import Product from "../entity/Product";
 import mysql from "mysql2";
+import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
 
 export default class ProductService { // 使用獨體
 
-    connection :mysql.Connection;
+    connection :mysql.Pool;
 
     private static instance :ProductService;
 
     private constructor() {
-        this.connection = getNewConnection();
-        
+        this.connection = MySQLConnectionPool.getPool();
     }
 
     static getInstance() {
@@ -27,53 +26,36 @@ export default class ProductService { // 使用獨體
     }
 
     changeDBTo(dbName: string) {
-        let oldConnection = this.connection;
-        
-        this.connection = getNewConnection(dbName);
 
-        oldConnection.end();
+        this.connection = MySQLConnectionPool.getPool(dbName);
     }
 
-    closeDB() {// Todo 這要注意 當其中一個 Service 呼叫 則會出錯
-        this.connection.end();
+    async addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]) {
+        let product = new Product(null, name, create_user_id, price, describe, photos);
+        let productDAO = new ProductDAO(this.connection);
+        await productDAO.create(product);
     }
 
+    async findProductById(id: number): Promise<object> {
 
-    addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]): Promise<void> {
-        return new Promise(async (resolve)=>{
-            let product = new Product(null, name, create_user_id, price, describe, photos);
-            let productDAO = new ProductDAO(this.connection);
-            await productDAO.create(product);
-            resolve();
-        })
-        
+
+        let productDAO = new ProductDAO(this.connection);
+        let product: Product|null= await productDAO.findById(id);
+
+        let product_json ={};
+        if(product) {
+            product_json = JSON.parse(JSON.stringify(product));
+        }
+
+        return product_json;
     }
 
-    findProductById(id: number): Promise<object> {
-        return new Promise(async (resolve)=>{
-            let productDAO = new ProductDAO(this.connection);
-            let product: Product|null= await productDAO.findById(id);
-
-            let product_json ={};
-            if(product) {
-                product_json = JSON.parse(JSON.stringify(product));
-            }
-
-            resolve(product_json);
-        })
-
-    }
-
-    findAllProduct(): Promise<[]> {
-        return new Promise(async (resolve)=>{
+    async findAllProduct(): Promise<[]> {
             let productDAO = new ProductDAO(this.connection);
             let products: Product[]= await productDAO.findAll();
-           
+        
             let products_json = JSON.parse(JSON.stringify(products));
-
-            resolve(products_json);
-        })
-
+            return products_json;
     }
 
 

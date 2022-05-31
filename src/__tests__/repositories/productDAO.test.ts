@@ -7,10 +7,11 @@ import Product from "../../entity/Product";
 
 import {initAlltables} from "../../db/seed";
 import User from "../../entity/User";
+import MySQLConnectionPool from "../../db/MySQLConnectionPool";
+
 
 let testDatabaseName = "testDatabase_product";
 let productDAO: ProductDAO;
-let connection: mysql.Connection;
 let userDAO: UserDAO;
 
 const user_init = new User(1,"u_email", "franky", "ya");
@@ -19,12 +20,16 @@ const p1_init: Product = new Product(55, "p_1", 1, 200, "p_d");
 const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
 
 beforeAll(async () => {
-    connection = await initAlltables(testDatabaseName);
-    productDAO = new ProductDAO(connection);
+    await initAlltables(testDatabaseName);
 
-    userDAO = new UserDAO(connection);
+    let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
 
-    userDAO.create(user_init);
+
+    productDAO = new ProductDAO(connectionPool);
+
+    userDAO = new UserDAO(connectionPool);
+
+    await userDAO.create(user_init);
 
     await productDAO.create(p1_init);
     await productDAO.create(p2_init);
@@ -33,7 +38,8 @@ beforeAll(async () => {
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
     await deletesDatabase(testDatabaseName);
-    connection.end();
+    MySQLConnectionPool.endPool(testDatabaseName);
+
 });
 
 describe("Product CRUD", ()=>{

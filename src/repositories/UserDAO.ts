@@ -4,9 +4,9 @@ import User from "../entity/User";
 
 export default class UserDAO {
 
-    connection: mysql.Connection;
+    connection: mysql.Pool;
 
-    constructor(connection: mysql.Connection) {
+    constructor(connection: mysql.Pool) {
         this.connection = connection;
     }
 
@@ -15,31 +15,24 @@ export default class UserDAO {
 
         return new Promise((resolve, reject) => {
 
-            connection.connect(function (err) {
+            if( user.id !== null ) {
 
-                if (err) throw err;
-
-                if( user.id !== null ) {
-
-                    let sql = "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
-                    connection.query(sql, [user.id, user.email, user.nickname, user.password], function (err, result) {
-                        if (err) reject(err);
-                        return resolve();
-                    });
+                let sql = "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
+                connection.query(sql, [user.id, user.email, user.nickname, user.password], function (err, result) {
+                    if (err) return reject(err);
+                    return resolve();
+                });
 
 
-                } else {
+            } else {
 
-                    let sql = "INSERT INTO `User`(`email`,`nickname`,`password`)VALUES(?,?,?)";
-                    connection.query(sql, [user.email, user.nickname, user.password], function (err, result) {
-                        if (err) reject(err);
-                        return resolve();
-                    });
-                }
+                let sql = "INSERT INTO `User`(`email`,`nickname`,`password`)VALUES(?,?,?)";
+                connection.query(sql, [user.email, user.nickname, user.password], function (err, result) {
+                    if (err) return reject(err);
+                    return resolve();
+                });
+            }
         
-                
-
-            });
 
         })
     }
@@ -52,7 +45,7 @@ export default class UserDAO {
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [ user.email, user.nickname, user.password, user.id ], function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
                 return resolve();
                 
             });
@@ -68,7 +61,7 @@ export default class UserDAO {
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [id], function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
     
                 let users: User[] = JSON.parse(JSON.stringify(result));
 
@@ -91,9 +84,9 @@ export default class UserDAO {
         let connection = this.connection;
         let returnUsers: User[] = [];
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             connection.query(sql, function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
     
                 let jResult= JSON.parse(JSON.stringify(result));
                 for(const user of jResult as User[]) {
@@ -114,7 +107,7 @@ export default class UserDAO {
 
         return new Promise((resolve, reject) => {
             connection.execute(sql, [ id ], function (err, result) {
-                if (err) throw err;
+                if (err) return reject(err);
                 return resolve();
                 
             });

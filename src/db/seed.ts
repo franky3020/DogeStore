@@ -1,5 +1,4 @@
 
-import mysql from "mysql2";
 import { createNewDatabase, deletesDatabase } from "./db";
 import SeedDBFromSQLFile from "./SeedDBFromSQLfile";
 import path from "path";
@@ -8,55 +7,49 @@ import User from "../entity/User";
 import Product from "../entity/Product";
 import UserDAO from "../repositories/UserDAO";
 import ProductDAO from "../repositories/ProductDAO";
+import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
-export function initAlltables(databaseName: string): Promise<mysql.Connection> {
+export async function initAlltables(databaseName: string) {
 
-    return new Promise(async (resolve) => {
+    await deletesDatabase(databaseName);
+    await createNewDatabase(databaseName);
 
-        await deletesDatabase(databaseName);
-        let connection: mysql.Connection = await createNewDatabase(databaseName);
-    
-        let seedDBFromSQLFile = new SeedDBFromSQLFile(connection)
-        await seedDBFromSQLFile.createTable(path.join(__dirname, "./User.sql"));
-        await seedDBFromSQLFile.createTable(path.join(__dirname, "./Product.sql"));
+    let connectionPool = MySQLConnectionPool.getPool(databaseName);
+    let seedDBFromSQLFile = new SeedDBFromSQLFile(connectionPool);
 
-        return resolve(connection);
-
-    });
+    await seedDBFromSQLFile.createTable(path.join(__dirname, "./User.sql"));
+    await seedDBFromSQLFile.createTable(path.join(__dirname, "./Product.sql"));
 }
 
-export function insertFakeData(databaseName: string): Promise<mysql.Connection> {
+export async function insertFakeData(databaseName: string) {
 
-    return new Promise(async (resolve) => {
+    await createNewDatabase(databaseName); // Todo  這裡有錯 已經存在的就不會 create了
 
-        let connection: mysql.Connection = await createNewDatabase(databaseName);
+    let connectPool = MySQLConnectionPool.getPool(databaseName);
 
-        const user_init = new User(1,"u_email", "franky", "ya");
-        
-        let userDAO = new UserDAO(connection);
-        await userDAO.create(user_init);  // 一定要先有user 因為外健限制
-        
-        const product_init_1 = new Product(1, "product_init_1", 1, 100, "m");
-        const product_init_2 = new Product(2, "product_init_2", 1, 200, "m");
-        const product_init_3 = new Product(3, "product_init_3", 1, 300, "m");
+    const user_init = new User(1,"u_email", "franky", "ya");
+    
+    let userDAO = new UserDAO(connectPool);
 
-        let productDAO = new ProductDAO(connection);
-        Promise.all([
-            productDAO.create(product_init_1),
-            productDAO.create(product_init_2),
-            productDAO.create(product_init_3),
-        ])
-        
+    await userDAO.create(user_init);  // 一定要先有user 因為外健限制
+    
+    const product_init_1 = new Product(1, "product_init_1", 1, 100, "m");
+    const product_init_2 = new Product(2, "product_init_2", 1, 200, "m");
+    const product_init_3 = new Product(3, "product_init_3", 1, 300, "m");
 
-        return resolve(connection);
-
-    });
+    let productDAO = new ProductDAO(connectPool);
+    
+    await Promise.all([
+        productDAO.create(product_init_1),
+        productDAO.create(product_init_2),
+        productDAO.create(product_init_3),
+    ]);
 }
 
 if (require.main === module) {
-    initAlltables("db_create_from_seed").then((connection)=>{
-        connection.end();// 有end, 程式才會正常結束 重要
+    initAlltables("db_create_from_seed").then(()=>{
         console.log("over")
+        MySQLConnectionPool.endPool("db_create_from_seed");
     });
 } 
 

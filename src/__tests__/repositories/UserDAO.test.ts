@@ -4,18 +4,18 @@ import { deletesDatabase } from "../../db/db";
 
 import {initAlltables} from "../../db/seed";
 import User from "../../entity/User";
+import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 
-let testDatabaseName = "testDatabase_user";
-let connection: mysql.Connection;
+const testDatabaseName = "testDatabase_user";
 let userDAO: UserDAO;
 
 const user_init_1 = new User(4, "test@test", "user_name", "yaya");
 const user_init_2 = new User(7, "test@test", "user_name", "yaya");
 
 beforeAll(async () => {
-    connection = await initAlltables(testDatabaseName);
-
-    userDAO = new UserDAO(connection);
+    await initAlltables(testDatabaseName);
+    let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
+    userDAO = new UserDAO(connectionPool);
 
     await userDAO.create(user_init_1);
     await userDAO.create(user_init_2);
@@ -23,7 +23,7 @@ beforeAll(async () => {
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
     await deletesDatabase(testDatabaseName);
-    connection.end();
+    MySQLConnectionPool.endPool(testDatabaseName);
 });
 
 describe("User CRUD", ()=>{
