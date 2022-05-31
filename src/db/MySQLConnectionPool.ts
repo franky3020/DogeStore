@@ -47,6 +47,10 @@ export default class MySQLConnectionPool {
     }
 
     static endPool(databaseName: string) {
+        // 要檢查有沒有存在 才刪
+        if(typeof MySQLConnectionPool.existDatabasePool[databaseName] === "undefined") {
+            throw new Error("can't find the database name: '" + databaseName + "'");
+        }
         MySQLConnectionPool.existDatabasePool[databaseName].end();
         delete MySQLConnectionPool.existDatabasePool[databaseName];
     }

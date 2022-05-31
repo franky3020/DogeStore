@@ -1,53 +1,36 @@
 
 
 import express, { Express, Request, Response, NextFunction } from 'express';
+
 import dotenv from 'dotenv';
 dotenv.config();
 
-import ProductCtrl from "./controller/ProductCtrl";
+import Routes from './routes';
 import {initAlltables, insertFakeData} from "./db/seed";
 import MySQLConnectionPool from "./db/MySQLConnectionPool";
+import { ValidationError } from "express-validation";
 
 const app: Express = express();
 app.use(express.json());
-
-const port = process.env.SERVER_PORT;
-
-import { validate, ValidationError, Joi } from "express-validation";
-
-const productValidation = {
-    body: Joi.object({
-        name: Joi.string()
-        .required(),
-        create_user_id: Joi.number()
-        .required(),
-        price: Joi.number()
-        .required(),
-        describe: Joi.string()
-        .required()
-    }),
-  }
-
-app.get('/product/:id', ProductCtrl.getProductById);
-app.get('/product', ProductCtrl.getAllProduct);
-app.post('/product', validate(productValidation), ProductCtrl.addNewProduct);
-
-// 有4個參數的方法 一定是用來做錯誤處理的
-app.use(function( err: any, req: Request, res: Response, next: NextFunction) {
-    if (err instanceof ValidationError) {
-        return res.status(err.statusCode).json(err)
-    }
-
-    return res.status(500).json(err)
-})
+new Routes(app);
 
 
 app.get('/stop', function(req, res){
   MySQLConnectionPool.endAllPool();
   res.send("stop");
-
   process.exit();
 });
+
+// 有4個參數的方法 一定是用來做錯誤處理的 一定要放在後面
+app.use(function( err: any, req: Request, res: Response, next: NextFunction) {
+  if (err instanceof ValidationError) {
+      return res.status(err.statusCode).json(err)
+  }
+
+  console.error(err);
+
+  return res.status(500).json(err)
+})
 
 
 //The 404 Route (ALWAYS Keep this as the last route)
@@ -55,9 +38,10 @@ app.get('*', function(req, res){
     res.status(404).send('nothing');
 });
 
-
+const port = process.env.SERVER_PORT;
 app.listen(port, async () => {
 
+  //Todo  這裡要修正 沒錯誤處理
   await initAlltables(process.env.DB_NAME as string);
   await insertFakeData(process.env.DB_NAME as string);
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);

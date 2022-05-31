@@ -28,12 +28,11 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
 
 describe("MySQLConnectionPool", ()=>{
 
-    test("query", async ()=> {
+    test("end not exist database name ", ()=> {
         
-        connectionPool.query("SELECT * FROM User", function(err, rows, fields) {
-            // Connection is automatically released when query resolves
-            console.log(rows);
-        })
+        expect(()=>{
+            MySQLConnectionPool.endPool("noExist");
+        }).toThrow();
 
     });
 });
