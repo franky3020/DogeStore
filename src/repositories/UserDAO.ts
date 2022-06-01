@@ -78,6 +78,31 @@ export default class UserDAO {
 
     }
 
+    findByEmail(email: string): Promise<User | null> {
+
+        let connection = this.connection;
+
+        let sql = "SELECT * FROM `User` WHERE `email` = ?"; // 記得這回傳依舊是list
+
+        return new Promise((resolve, reject) => {
+            connection.execute(sql, [email], function (err, result) {
+                if (err) return reject(err);
+    
+                let users: User[] = JSON.parse(JSON.stringify(result));
+
+                if ( users.length === 0 ) {
+                    return resolve(null);
+                }
+
+                let user = users[0];
+                
+                return resolve(new User(user.id, user.email, user.nickname, user.password));
+                
+            });
+        });
+
+    }
+
     findAll(): Promise< User[] > { 
 
         let sql = "SELECT * FROM `User`";

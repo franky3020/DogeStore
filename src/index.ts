@@ -9,9 +9,12 @@ import Routes from './routes';
 import {initAlltables, insertFakeData} from "./db/seed";
 import MySQLConnectionPool from "./db/MySQLConnectionPool";
 import { ValidationError } from "express-validation";
+var cors = require('cors');
+
 
 const app: Express = express();
 app.use(express.json());
+app.use(cors())
 new Routes(app);
 
 
