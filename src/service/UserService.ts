@@ -6,6 +6,8 @@ import UserDAO from "../repositories/UserDAO";
 
 import User from "../entity/User";
 
+const jwt = require("jsonwebtoken");
+
 export default class UserService { // 使用獨體
 
     connection :mysql.Pool;
@@ -28,6 +30,25 @@ export default class UserService { // 使用獨體
     changeDBTo(dbName: string) {
 
         this.connection = MySQLConnectionPool.getPool(dbName);
+    }
+
+    async getUserJWT(email: string, password: string): Promise<string|null> {
+
+        let isLogin = await this.checkUserPassword(email, password);
+        if(isLogin) {
+            let userDAO = new UserDAO(this.connection);
+            let user: User|null= await userDAO.findByEmail(email);
+
+            if(user) {
+                let id = user.id;
+                let nickname = user.nickname;
+                const token = jwt.sign({ id, email, nickname }, "frankytest");
+                return token;
+            }
+
+        }
+        return null;
+
     }
 
     async checkUserPassword(email: string, password: string): Promise<boolean> {
