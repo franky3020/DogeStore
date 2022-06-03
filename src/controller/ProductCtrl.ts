@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 
 import ProductService from "../service/ProductService";
 
+
+
 export default class ProductCtrl {
 
 
@@ -41,4 +43,21 @@ export default class ProductCtrl {
             next(err);
         }
     }
+
+
+    // uploadFile Todo 這一定會依賴 multer 的中間間, 所以應該要寫在一起
+    async addProductImg(req: any, res: Response, next: NextFunction) {
+
+        let productService = ProductService.getInstance();
+        try {
+            await productService.addProductImg(0, req.file.buffer , req.file.originalname);
+            res.status(201).end();
+        } catch(err) {
+            next(err);
+        }
+
+    }
+
+
+
 }
