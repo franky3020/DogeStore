@@ -6,7 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import ProductService from "../service/ProductService";
 
-const multer  = require('multer');
+const multer = require('multer');
 const uploadFile = multer();
 
 class ProductRoutes {
@@ -16,15 +16,15 @@ class ProductRoutes {
     productValidation = {
         body: Joi.object({
             name: Joi.string()
-            .required(),
+                .required(),
             create_user_id: Joi.number()
-            .required(),
+                .required(),
             price: Joi.number()
-            .required(),
+                .required(),
             describe: Joi.string()
-            .required()
+                .required()
         }),
-      };
+    };
 
     constructor() {
         this.intializeRoutes();
@@ -34,10 +34,12 @@ class ProductRoutes {
         this.router.route('/:id').get(this.getProductById);
         this.router.route('/').get(this.getAllProduct);
         this.router.route('/').post(validate(this.productValidation), this.addNewProduct);
-        this.router.route('/upload').post(uploadFile.single('uploaded_file'), this.addProductImg);
+        this.router.route('/:id/upload').post(uploadFile.single('uploaded_file'), this.addProductImg);
 
     }
 
+
+    //Todo 需消毒輸入參數
     async addNewProduct(req: Request, res: Response, next: NextFunction) {
         let productService = ProductService.getInstance();
 
@@ -52,13 +54,19 @@ class ProductRoutes {
         } catch (err) {
             next(err);
         }
-        
+
     }
 
     async getProductById(req: Request, res: Response, next: NextFunction) { // 這裡就要去拿到照片
         let productService = ProductService.getInstance();
         try {
-            let result = await productService.findProductById(Number(req.params.id));
+
+            let productId: number = Number(req.params.id);
+            if(Number.isNaN(productId)) {
+                throw Error("params.id is not number");
+            }
+
+            let result = await productService.findProductById(productId);
             res.send(result);
         } catch (err) {
             next(err);
@@ -75,15 +83,20 @@ class ProductRoutes {
         }
     }
 
-
-    // uploadFile Todo 這一定會依賴 multer 的中間間, 所以應該要寫在一起
+    // req.file.buffer, req.file.originalname 會從 uploadFile.single('uploaded_file') 提供
     async addProductImg(req: any, res: Response, next: NextFunction) {
 
         let productService = ProductService.getInstance();
         try {
-            await productService.addProductImg(0, req.file.buffer , req.file.originalname);
+
+            let productId: number = Number(req.params.id);
+            if(Number.isNaN(productId)) {
+                throw Error("params.id is not number");
+            }
+
+            await productService.addProductImg(productId, req.file.buffer, req.file.originalname);
             res.status(201).end();
-        } catch(err) {
+        } catch (err) {
             next(err);
         }
 

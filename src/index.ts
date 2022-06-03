@@ -14,7 +14,7 @@ import path from "path";
 
 const app: Express = express();
 
-
+app.disable('x-powered-by'); // 官網寫 可防止駭客用來探測有沒有用express 架的網站
 app.use(express.json());
 app.use(cors())
 
