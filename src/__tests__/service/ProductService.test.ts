@@ -82,5 +82,27 @@ describe("Product service", ()=>{
         expect(product_length).toEqual(actual_length);
 
     });
+
+    test("add Product image", async () => {
+        let productService = ProductService.getInstance();
+        
+        let createProductId = 0;
+        let testString:string = "test-string";
+        let createFileName:string = "test.img";
+
+
+        try{
+            await productService.addProductImg(createProductId, Buffer.from(testString), createFileName);
+            let imgBuffer= await productService.getProductImg(createProductId, createFileName);
+
+            expect(imgBuffer.toString()).toBe(testString);
+            await productService.deleteProductImg(createProductId, createFileName);
+
+        } catch(err) {
+            expect(true).toBe(false);
+        }
+        
+
+    });
     
 });
