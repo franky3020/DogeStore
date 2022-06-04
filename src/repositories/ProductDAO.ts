@@ -39,23 +39,19 @@ export default class ProductDAO {
 
         let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve) => {
 
-            // 這裡需要修改, 所有的非同步都要使用 promise, 錯誤才會傳遞
-            connection.execute(sql, [id], function (err, result) {
-                if (err) return reject(err);
-    
-                let products: Product[] = JSON.parse(JSON.stringify(result));
+            let [rows, fields] = await connection.promise().execute(sql, [id]);
 
-                if ( products.length === 0 ) {
-                    return resolve(null);
-                }
+            let products: Product[] = JSON.parse(JSON.stringify(rows));
 
-                let product = products[0];
-                
-                return resolve(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
-                
-            });
+            if ( products.length === 0 ) {
+                return resolve(null);
+            }
+
+            let product = products[0];
+            return resolve(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
+            
         });
 
     }
