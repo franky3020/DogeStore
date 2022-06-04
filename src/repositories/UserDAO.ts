@@ -72,7 +72,15 @@ export default class UserDAO {
         let sql = "SELECT * FROM `User` WHERE `email` = ?"; // 記得這回傳依舊是list
 
         return new Promise(async (resolve, reject) => {
-            let [rows, fields] = await connection.promise().execute(sql, [email]);
+
+            let rows: any, fields: any;
+            try{
+                [rows, fields] = await connection.promise().execute(sql, [email]);
+            }catch(err) {
+                return reject(err);
+            }
+
+
             let users: User[] = JSON.parse(JSON.stringify(rows));
 
             if ( users.length === 0 ) {
@@ -94,8 +102,15 @@ export default class UserDAO {
         let connection = this.connection;
         let returnUsers: User[] = [];
 
-        return new Promise(async (resolve) => {
-            let [rows, fields] = await connection.promise().query(sql);
+        return new Promise(async (resolve, reject) => {
+
+            let rows: any, fields: any;
+
+            try{
+                [rows, fields] = await connection.promise().query(sql);
+            } catch(err) {
+                return reject(err);
+            }
 
             let jResult= JSON.parse(JSON.stringify(rows));
             for(const user of jResult as User[]) {
@@ -111,7 +126,7 @@ export default class UserDAO {
 
         let connection = this.connection;
 
-        let sql = "DELETE FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
+        let sql = "DELETE FROM `User` WHERE `id` = ?";
         return connection.promise().execute(sql, [ id ]);
     }
 

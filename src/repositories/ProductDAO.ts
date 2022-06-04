@@ -39,9 +39,14 @@ export default class ProductDAO {
 
         let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
+            let rows: any, fields: any;
+            try{
+                [rows, fields] = await connection.promise().execute(sql, [id]);
 
-            let [rows, fields] = await connection.promise().execute(sql, [id]);
+            }catch(err) {
+                return reject(err);
+            }
 
             let products: Product[] = JSON.parse(JSON.stringify(rows));
 
@@ -62,9 +67,15 @@ export default class ProductDAO {
         let connection = this.connection;
         let returnProducts: Product[] = [];
 
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
+            let rows: any, fields: any;
 
-            let [rows, fields] = await connection.promise().query(sql);
+            try{
+                [rows, fields] = await connection.promise().query(sql);
+            } catch(err) {
+                return reject(err);
+            }
+
             let jResult= JSON.parse(JSON.stringify(rows));
             for(const product of jResult as Product[]) {
                 returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
@@ -78,7 +89,7 @@ export default class ProductDAO {
 
         let connection = this.connection;
 
-        let sql = "DELETE FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
+        let sql = "DELETE FROM `Products` WHERE `id` = ?";
         return connection.promise().execute(sql, [ id ]);
         
     }

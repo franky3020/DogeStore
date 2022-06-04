@@ -46,7 +46,7 @@ describe("User CRUD", ()=>{
         expect(users.length).toEqual(expectLength);
     })
 
-    test.only("not find", async ()=> {
+    test("not find", async ()=> {
 
         try {
             let user = await userDAO.findById(0);
