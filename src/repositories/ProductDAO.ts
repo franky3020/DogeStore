@@ -11,31 +11,16 @@ export default class ProductDAO {
         this.connection = connection;
     }
 
-
-    create(product: Product): Promise<void> {
+    async create(product: Product): Promise<void> {
         let connection = this.connection;
 
-        return new Promise((resolve, reject) => {
-
-            if( product.id !== null ) {
-
-                let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
-                connection.query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                    if (err) return reject(err);
-                    return resolve();
-                });
-
-
-            } else {
-
-                let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
-                connection.query(sql, [product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                    if (err) return reject(err);
-                    return resolve();
-                });
-            }
-
-        })
+        if( product.id !== null ) {
+            let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
+            await connection.promise().query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe]);
+        } else {
+            let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
+            await connection.promise().query(sql, [product.name, product.create_user_id, product.price, product.describe]);
+        }
     }
 
     update(product: Product): Promise<void> {
@@ -61,6 +46,8 @@ export default class ProductDAO {
         let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
         return new Promise((resolve, reject) => {
+
+            // 這裡需要修改, 所有的非同步都要使用 promise, 錯誤才會傳遞
             connection.execute(sql, [id], function (err, result) {
                 if (err) return reject(err);
     
