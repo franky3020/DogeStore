@@ -40,70 +40,45 @@ export default class ProductService { // 使用獨體
         await productDAO.create(product);
     }
 
-    addProductImg(product_id: number, imageFile: Buffer, fileName: string): Promise<void> {
+    async addProductImg(product_id: number, imageFile: Buffer, fileName: string): Promise<void> {
 
-        return new Promise((resolve, reject) => {
-
-            let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
-
-            // if err, ignore, you should just unconditionally call mkdir and ignore EEXIST
-            fs.mkdir(saveDir, () => {
-                // Todo 如果 fileName不是字串, 則會拋出錯誤, 但因為我沒捕捉, 所以程式會直接關閉
-                let filePath = path.join(saveDir, fileName);
-                fs.writeFile(filePath, imageFile, function (error) {
-
-                    if (error) {
-                        return reject(error);
-                    }
-
-                    return resolve();
-
-                })
-            })
+        let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
+            
+        await fs.promises.mkdir(saveDir).catch((err)=>{
+            // do Nothing
+        }); // 故意忽略錯誤
 
 
-        })
+        let filePath = path.join(saveDir, fileName);
+        await fs.promises.writeFile(filePath, imageFile);
 
     }
 
     getProductImg(product_id: number, fileName: string): Promise<Buffer> {
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
             let filePath = path.join(saveDir, fileName);
 
-
-
-            fs.readFile(filePath, function (error, data) {
-                if (error) {
-                    return reject(error);
-                }
+            try {
+                let data = await fs.promises.readFile(filePath);
                 return resolve(data);
-            })
+            } catch(err) {
+                reject(err);
+            }
 
         })
 
 
     }
 
-    deleteProductImg(product_id: number, fileName: string): Promise<void> {
+    deleteProductImg(product_id: number, fileName: string): Promise<any> {
 
-        return new Promise((resolve, reject) => {
+        let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
+        let filePath = path.join(saveDir, fileName);
 
-            let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
-            let filePath = path.join(saveDir, fileName);
-
-            fs.rm(filePath, { force: true }, function (error) {
-                if (error) {
-                    return reject(error);
-                }
-                return resolve();
-            })
-
-        })
-
-
+        return fs.promises.rm(filePath, { force: true });
     }
 
 

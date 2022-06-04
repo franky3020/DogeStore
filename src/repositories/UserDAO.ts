@@ -41,9 +41,16 @@ export default class UserDAO {
 
         let sql = "SELECT * FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
 
-            let [rows, fields] = await connection.promise().execute(sql, [id]);
+            let rows: any, fields: any;
+
+            try{
+                [rows, fields] = await connection.promise().execute(sql, [id]);
+            } catch(err) {
+                return reject(err);
+            }
+
             let users: User[] = JSON.parse(JSON.stringify(rows));
 
             if ( users.length === 0 ) {
