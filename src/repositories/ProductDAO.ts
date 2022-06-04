@@ -11,46 +11,25 @@ export default class ProductDAO {
         this.connection = connection;
     }
 
-
-    create(product: Product): Promise<void> {
+    create(product: Product): Promise<any> {
         let connection = this.connection;
 
-        return new Promise((resolve, reject) => {
-
-            if( product.id !== null ) {
-
-                let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
-                connection.query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                    if (err) return reject(err);
-                    return resolve();
-                });
-
-
-            } else {
-
-                let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
-                connection.query(sql, [product.name, product.create_user_id, product.price, product.describe], function (err, result) {
-                    if (err) return reject(err);
-                    return resolve();
-                });
-            }
-
-        })
+        if( product.id !== null ) {
+            let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
+            return connection.promise().query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe]);
+        } else {
+            let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
+            return connection.promise().query(sql, [product.name, product.create_user_id, product.price, product.describe]);
+        }
     }
 
-    update(product: Product): Promise<void> {
+    update(product: Product): Promise<any> {
         
         let connection = this.connection;
 
         let sql = "UPDATE `Products` SET `name` = ?, `create_user_id` = ?,`price` = ?, `describe` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
-            connection.execute(sql, [ product.name, product.create_user_id, product.price, product.describe, product.id ], function (err, result) {
-                if (err) return reject(err);
-                return resolve();
-                
-            });
-        });
+        return connection.promise().execute(sql, [ product.name, product.create_user_id, product.price, product.describe, product.id ]);
 
     }
 
@@ -60,21 +39,24 @@ export default class ProductDAO {
 
         let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-        return new Promise((resolve, reject) => {
-            connection.execute(sql, [id], function (err, result) {
-                if (err) return reject(err);
-    
-                let products: Product[] = JSON.parse(JSON.stringify(result));
+        return new Promise(async (resolve, reject) => {
+            let rows: any, fields: any;
+            try{
+                [rows, fields] = await connection.promise().execute(sql, [id]);
 
-                if ( products.length === 0 ) {
-                    return resolve(null);
-                }
+            }catch(err) {
+                return reject(err);
+            }
 
-                let product = products[0];
-                
-                return resolve(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
-                
-            });
+            let products: Product[] = JSON.parse(JSON.stringify(rows));
+
+            if ( products.length === 0 ) {
+                return resolve(null);
+            }
+
+            let product = products[0];
+            return resolve(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
+            
         });
 
     }
@@ -85,34 +67,31 @@ export default class ProductDAO {
         let connection = this.connection;
         let returnProducts: Product[] = [];
 
-        return new Promise((resolve, reject) => {
-            connection.query(sql, function (err, result) {
-                if (err) return reject(err);
-    
-                let jResult= JSON.parse(JSON.stringify(result));
-                for(const product of jResult as Product[]) {
-                    returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
-                }
-                return resolve(returnProducts);
-                
-            });
+        return new Promise(async (resolve, reject) => {
+            let rows: any, fields: any;
+
+            try{
+                [rows, fields] = await connection.promise().query(sql);
+            } catch(err) {
+                return reject(err);
+            }
+
+            let jResult= JSON.parse(JSON.stringify(rows));
+            for(const product of jResult as Product[]) {
+                returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
+            }
+            return resolve(returnProducts);
         });
 
     }
 
-    deleteById(id: number): Promise<void> {
+    deleteById(id: number): Promise<any> {
 
         let connection = this.connection;
 
-        let sql = "DELETE FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
-
-        return new Promise((resolve, reject) => {
-            connection.execute(sql, [ id ], function (err, result) {
-                if (err) return reject(err);
-                return resolve();
-                
-            });
-        });
+        let sql = "DELETE FROM `Products` WHERE `id` = ?";
+        return connection.promise().execute(sql, [ id ]);
+        
     }
 
 

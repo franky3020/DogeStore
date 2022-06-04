@@ -47,8 +47,15 @@ describe("User CRUD", ()=>{
     })
 
     test("not find", async ()=> {
-        let user = await userDAO.findById(0);
-        expect(user).toBeNull();
+
+        try {
+            let user = await userDAO.findById(0);
+            expect(user).toBeNull();
+        }catch(err) {
+            expect(true).toBe(false);
+        }
+
+
     })
     
     test("update", async ()=> {
