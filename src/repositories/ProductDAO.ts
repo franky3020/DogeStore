@@ -62,34 +62,25 @@ export default class ProductDAO {
         let connection = this.connection;
         let returnProducts: Product[] = [];
 
-        return new Promise((resolve, reject) => {
-            connection.query(sql, function (err, result) {
-                if (err) return reject(err);
-    
-                let jResult= JSON.parse(JSON.stringify(result));
-                for(const product of jResult as Product[]) {
-                    returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
-                }
-                return resolve(returnProducts);
-                
-            });
+        return new Promise(async (resolve) => {
+
+            let [rows, fields] = await connection.promise().query(sql);
+            let jResult= JSON.parse(JSON.stringify(rows));
+            for(const product of jResult as Product[]) {
+                returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
+            }
+            return resolve(returnProducts);
         });
 
     }
 
-    deleteById(id: number): Promise<void> {
+    deleteById(id: number): Promise<any> {
 
         let connection = this.connection;
 
         let sql = "DELETE FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
-
-        return new Promise((resolve, reject) => {
-            connection.execute(sql, [ id ], function (err, result) {
-                if (err) return reject(err);
-                return resolve();
-                
-            });
-        });
+        return connection.promise().execute(sql, [ id ]);
+        
     }
 
 

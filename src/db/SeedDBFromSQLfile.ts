@@ -10,40 +10,23 @@ export default class SeedDBFromSQLFile {
         this.connection = connection;
     }
 
-    createTable(sqlFilePath: string) :Promise<void> {
+    async createTable(sqlFilePath: string) :Promise<any> {
         let connection = this.connection;
 
-        return new Promise<void>((resolve, reject) => {
+        let data = await fs.promises.readFile(sqlFilePath, 'utf8');
 
-            fs.readFile(sqlFilePath, 'utf8', (err, data) => {
-                if (err) {
-                    reject(new Error("file can't read"));
-                }
+        let sql = data;
                 
-                let sql = data;
-                
-                connection.query(sql, function (err, result) {
-                    if (err) return reject(err);
-                    return resolve(result as any);
-                });
-            });
+        return connection.promise().query(sql);
 
-        });
 
     }
 
-    dropTable(tableName: string): Promise<void> {
+    dropTable(tableName: string): Promise<any> {
         let connection = this.connection;
-        
-        return new Promise( (resolve, reject) => {
 
-            var sql = "DROP TABLE IF EXISTS `" + tableName + "`";
-            connection.query(sql, function (err, result) {
-                if (err) return reject(err);
-                return resolve(result as any);
-            });
-            
-        })
+        let sql = "DROP TABLE IF EXISTS `" + tableName + "`";
+        return connection.promise().query(sql);
     }
 
 }
