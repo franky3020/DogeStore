@@ -45,6 +45,9 @@ class ProductRoutes {
 
     //Todo 需消毒輸入參數
     async addNewProduct(req: Request, res: Response, next: NextFunction) {
+        
+        try {
+
         let productService = ProductService.getInstance();
 
         let product_name = req.body.name;
@@ -52,18 +55,18 @@ class ProductRoutes {
         let price = req.body.price;
         let describe = req.body.describe;
 
-        try {
+        
             await productService.addProduct(product_name, create_user_id, price, describe);
-            res.status(201).end();
+            return res.status(201).end();
         } catch (err) {
-            next(err);
+            return next(err);
         }
 
     }
 
     async getProductById(req: Request, res: Response, next: NextFunction) { // 這裡就要去拿到照片
-        let productService = ProductService.getInstance();
         try {
+            let productService = ProductService.getInstance();
 
             let productId: number = Number(req.params.id);
             if (Number.isNaN(productId)) {
@@ -71,38 +74,51 @@ class ProductRoutes {
             }
 
             let result = await productService.findProductById(productId);
-            res.send(result);
+            return res.send(result);
         } catch (err) {
-            next(err);
+            return next(err);
         }
     }
 
     async getAllProduct(req: Request, res: Response, next: NextFunction) {
-        let productService = ProductService.getInstance();
+
         try {
+            let productService = ProductService.getInstance();
+
             let result = await productService.findAllProduct();
-            res.send(result);
+            return res.send(result);
         } catch (err) {
-            next(err);
+            return next(err);
         }
     }
 
     // req.file.buffer, req.file.originalname 會從 uploadFile.single('uploaded_file') 提供
     async addProductImg(req: any, res: Response, next: NextFunction) {
 
-
-        let productService = ProductService.getInstance();
         try {
+            let productService = ProductService.getInstance();
 
             let productId: number = Number(req.params.id);
             if (Number.isNaN(productId)) {
                 throw Error("params.id is not number");
             }
 
+            if (typeof req.file === "undefined" ||
+                typeof req.file.buffer === "undefined" ||
+                typeof req.file.originalname === "undefined") {
+                   
+                throw Error("error in upload file");
+            }
+
+            if (req.file.originalname === "") {
+                throw Error("file can't not name");
+            }
+
+
             await productService.addProductImg(productId, req.file.buffer, req.file.originalname);
-            res.status(201).end();
+            return res.status(201).end();
         } catch (err) {
-            next(err);
+            return next(err);
         }
 
     }
