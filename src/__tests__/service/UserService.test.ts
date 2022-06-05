@@ -22,11 +22,7 @@ beforeAll(async () => {
     await initAlltables(testDatabaseName);
     userService = UserService.getInstance();
     userService.changeDBTo(testDatabaseName);
-
-    let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
-
-    let userDAO = new UserDAO(connectionPool);
-    await userDAO.create(user_init);  // 一定要先有user 因為外健限制
+    await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
 
 });
 
@@ -35,7 +31,7 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
     MySQLConnectionPool.endPool(testDatabaseName);
 });
 
-describe("Product service", ()=>{
+describe("User service", ()=>{
 
     test("check user password ", async () => {
         let isUserPasswordRight = await userService.checkUserPassword(user_init.email, user_init.password);

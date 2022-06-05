@@ -9,6 +9,8 @@ import UserDAO from "../repositories/UserDAO";
 import ProductDAO from "../repositories/ProductDAO";
 import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
+import UserService from "../service/UserService";
+
 export async function initAlltables(databaseName: string) {
 
     await deletesDatabase(databaseName);
@@ -28,10 +30,11 @@ export async function insertFakeData(databaseName: string) {
     let connectPool = MySQLConnectionPool.getPool(databaseName);
 
     const user_init = new User(1,"u_email", "franky", "ya");
-    
-    let userDAO = new UserDAO(connectPool);
 
-    await userDAO.create(user_init);  // 一定要先有user 因為外健限制
+    // 一定要先有user 因為外健限制
+    await UserService.getInstance().addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
+
+
     
     const product_init_1 = new Product(1, "product_init_1", 1, 100, "m");
     const product_init_2 = new Product(2, "product_init_2", 1, 200, "m");

@@ -7,6 +7,7 @@ import UserDAO from "../repositories/UserDAO";
 import User from "../entity/User";
 import 'dotenv/config';
 
+const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
 export default class UserService { // 使用獨體
@@ -60,12 +61,43 @@ export default class UserService { // 使用獨體
         let userDAO = new UserDAO(this.connection);
         let user: User|null= await userDAO.findByEmail(email);
 
-        if(user && user.password === password) {
-            return true;
+        if(user) {
+            let isUserLogin = await this.bcryptComparePassword(password, user.password);
+            return isUserLogin;
         }
         return false;
 
     }
+
+
+    async addNewUser(email: string, nickname: string, password: string, id?: number) {
+        let userDAO = new UserDAO(this.connection);
+
+
+        let hashPassword = await this.bcryptPassword(password);
+
+        if(typeof id === "undefined") {
+            let user = new User(null, email, nickname, hashPassword);
+            await userDAO.create(user);
+        } else {
+            let user = new User(id, email, nickname, hashPassword);
+            await userDAO.create(user);
+        }
+        
+
+    }
+
+
+    bcryptPassword(password: string): Promise<string> {
+        const saltRounds = 10;
+        return bcrypt.hash(password, saltRounds);
+    }
+
+    bcryptComparePassword(password: string, hash: string): Promise<boolean> {
+        return bcrypt.compare(password, hash);
+    }
+
+    
 
 
 

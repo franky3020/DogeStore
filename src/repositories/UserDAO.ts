@@ -13,6 +13,7 @@ export default class UserDAO {
     create(user: User): Promise<any> {
         let connection = this.connection;
 
+        // Todo 改成判斷 undefine 比較好
         if( user.id !== null ) {
 
             let sql = "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
