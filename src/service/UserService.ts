@@ -5,6 +5,7 @@ import MySQLConnectionPool from "../db/MySQLConnectionPool";
 import UserDAO from "../repositories/UserDAO";
 
 import User from "../entity/User";
+import 'dotenv/config';
 
 const jwt = require("jsonwebtoken");
 
@@ -32,6 +33,8 @@ export default class UserService { // 使用獨體
         this.connection = MySQLConnectionPool.getPool(dbName);
     }
 
+    // Todo JWT 的簽名 應該獨立出來, 因為簽名的欄位 要放在一起管裡, 不能每次都來這裡查看
+    // 要有服務專門簽使用者 與 驗證使用者
     async getUserJWT(email: string, password: string): Promise<string|null> {
 
         let isLogin = await this.checkUserPassword(email, password);
@@ -42,7 +45,7 @@ export default class UserService { // 使用獨體
             if(user) {
                 let id = user.id;
                 let nickname = user.nickname;
-                const token = jwt.sign({ id, email, nickname }, "frankytest");
+                const token = jwt.sign({ id, email, nickname }, process.env.JWT_PRIVATE_KEY);
                 return token;
             }
 

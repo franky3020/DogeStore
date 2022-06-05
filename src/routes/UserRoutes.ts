@@ -1,7 +1,7 @@
 
 import { Router } from 'express';
 
-import { validate, ValidationError, Joi } from "express-validation";
+import { validate, Joi } from "express-validation";
 
 import { Request, Response, NextFunction } from 'express';
 

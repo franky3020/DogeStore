@@ -6,8 +6,10 @@ import { Request, Response, NextFunction } from 'express';
 
 import ProductService from "../service/ProductService";
 
-const multer = require('multer');
-const uploadFile = multer();
+import { authentication } from "../middleware/jwtAuth";
+
+import multer from "multer";
+
 
 class ProductRoutes {
 
@@ -26,6 +28,8 @@ class ProductRoutes {
         }),
     };
 
+    uploadFile: multer.Multer = multer();
+
     constructor() {
         this.intializeRoutes();
     }
@@ -33,8 +37,8 @@ class ProductRoutes {
     intializeRoutes() {
         this.router.route('/:id').get(this.getProductById);
         this.router.route('/').get(this.getAllProduct);
-        this.router.route('/').post(validate(this.productValidation), this.addNewProduct);
-        this.router.route('/:id/upload').post(uploadFile.single('uploaded_file'), this.addProductImg);
+        this.router.route('/').post(authentication, validate(this.productValidation), this.addNewProduct);
+        this.router.route('/:id/upload').post(authentication, this.uploadFile.single('uploaded_file'), this.addProductImg);
 
     }
 
@@ -62,7 +66,7 @@ class ProductRoutes {
         try {
 
             let productId: number = Number(req.params.id);
-            if(Number.isNaN(productId)) {
+            if (Number.isNaN(productId)) {
                 throw Error("params.id is not number");
             }
 
@@ -86,11 +90,12 @@ class ProductRoutes {
     // req.file.buffer, req.file.originalname 會從 uploadFile.single('uploaded_file') 提供
     async addProductImg(req: any, res: Response, next: NextFunction) {
 
+
         let productService = ProductService.getInstance();
         try {
 
             let productId: number = Number(req.params.id);
-            if(Number.isNaN(productId)) {
+            if (Number.isNaN(productId)) {
                 throw Error("params.id is not number");
             }
 
