@@ -1,11 +1,7 @@
 
-import ProductService from "../../service/ProductService";
 import { deletesDatabase } from "../../db/db";
 
-import mysql from "mysql2";
-import ProductDAO from "../../repositories/ProductDAO";
 import {initAlltables} from "../../db/seed";
-import UserDAO from "../../repositories/UserDAO";
 import User from "../../entity/User";
 import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 
@@ -16,11 +12,10 @@ const testDatabaseName = "testDatabase_user_service";
 
 const user_init = new User(1,"u_email", "franky", "ya");
 
-let userService: UserService;
+const userService = new UserService();
 
 beforeAll(async () => {
     await initAlltables(testDatabaseName);
-    userService = UserService.getInstance();
     userService.changeDBTo(testDatabaseName);
     await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
 

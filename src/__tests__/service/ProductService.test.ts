@@ -4,7 +4,6 @@
 import ProductService from "../../service/ProductService";
 import { deletesDatabase } from "../../db/db";
 
-import mysql from "mysql2";
 import ProductDAO from "../../repositories/ProductDAO";
 import Product from "../../entity/Product";
 import {initAlltables} from "../../db/seed";

@@ -20,6 +20,8 @@ class UserRoutes {
         }),
     };
 
+    userService = new UserService();
+
     constructor() {
         this.intializeRoutes();
     }
@@ -33,14 +35,12 @@ class UserRoutes {
         try {
 
 
-            let userService = UserService.getInstance();
-
             let email = req.body.email;
             let password = req.body.password;
 
 
             // 這裡為了讓商業邏輯封裝在 service中 所以不能是先做判斷 在拿去JWT, 現在這樣才是對的
-            let jwt = await userService.getUserJWT(email, password);
+            let jwt = await this.userService.getUserJWT(email, password);
 
             if (jwt) {
 

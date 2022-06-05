@@ -10,27 +10,16 @@ import 'dotenv/config';
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
-export default class UserService { // 使用獨體
+export default class UserService {
 
     connection :mysql.Pool;
 
-    private static instance :UserService;
 
-    private constructor() {
+    constructor() {
         this.connection = MySQLConnectionPool.getPool();
     }
 
-    static getInstance() {
-
-        if( typeof UserService.instance === "undefined" ) {
-            UserService.instance = new UserService();
-        }
-
-        return UserService.instance;
-    }
-
     changeDBTo(dbName: string) {
-
         this.connection = MySQLConnectionPool.getPool(dbName);
     }
 

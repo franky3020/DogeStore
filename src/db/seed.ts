@@ -32,7 +32,8 @@ export async function insertFakeData(databaseName: string) {
     const user_init = new User(1,"u_email", "franky", "ya");
 
     // 一定要先有user 因為外健限制
-    await UserService.getInstance().addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
+    let userService = new UserService();
+    await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
 
 
     
