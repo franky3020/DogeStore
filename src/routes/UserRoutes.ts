@@ -20,7 +20,7 @@ class UserRoutes {
         }),
     };
 
-    userService = new UserService();
+    userService: UserService = new UserService();;
 
     constructor() {
         this.intializeRoutes();
@@ -31,13 +31,10 @@ class UserRoutes {
     }
 
 
-    async getUserJWT(req: Request, res: Response, next: NextFunction) {
+    getUserJWT = async (req: Request, res: Response, next: NextFunction) => {
         try {
-
-
             let email = req.body.email;
             let password = req.body.password;
-
 
             // 這裡為了讓商業邏輯封裝在 service中 所以不能是先做判斷 在拿去JWT, 現在這樣才是對的
             let jwt = await this.userService.getUserJWT(email, password);
@@ -55,6 +52,7 @@ class UserRoutes {
             next(err);
         }
     }
+
 
 }
 

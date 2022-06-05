@@ -29,10 +29,12 @@ class ProductRoutes {
     };
 
     uploadFile: multer.Multer = multer();
-    productService = new ProductService();
+    productService: ProductService;
 
     constructor() {
+        this.productService = new ProductService();
         this.intializeRoutes();
+        
     }
 
     intializeRoutes() {
