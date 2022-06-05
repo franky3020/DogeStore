@@ -17,10 +17,11 @@ let productDAO: ProductDAO;
 
 const user_init = new User(1,"u_email", "franky", "ya");
 const product_init_1 = new Product(5, "product_init_1", 1, 100, "product_init_1");
+const productService = new ProductService();
 
 beforeAll(async () => {
     await initAlltables(testDatabaseName);
-    let productService = ProductService.getInstance();
+   
     productService.changeDBTo(testDatabaseName);
 
     let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
@@ -41,7 +42,7 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
 
 describe("Product service", ()=>{
     test("addProduct", async () => {
-        let productService = ProductService.getInstance();
+     
         
         const product_1 = new Product(null, "test", 1, 100, "yaya");
         await productService.addProduct(product_1.name, product_1.create_user_id, product_1.price, product_1.describe);
@@ -52,16 +53,8 @@ describe("Product service", ()=>{
     });
 
 
-    test("is Singleton", ()=>{
-        let productService = ProductService.getInstance();
-        let productService2 = ProductService.getInstance();
-
-        expect(Object.is(productService, productService2)).toBe(true)
-    });
-
-
     test("findProductById", async () => {
-        let productService = ProductService.getInstance();
+  
         
         let product_json = await productService.findProductById(product_init_1.id as number);
 
@@ -72,7 +65,7 @@ describe("Product service", ()=>{
     });
 
     test("findProductById", async () => {
-        let productService = ProductService.getInstance();
+
         
         let products_json = await productService.findAllProduct();
 
@@ -83,7 +76,7 @@ describe("Product service", ()=>{
     });
 
     test("add Product image", async () => {
-        let productService = ProductService.getInstance();
+ 
         
         let createProductId = 0;
         let testString:string = "test-string";

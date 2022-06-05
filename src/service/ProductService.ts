@@ -8,28 +8,17 @@ import MySQLConnectionPool from "../db/MySQLConnectionPool";
 import fs from "fs";
 import path from "path";
 
-export default class ProductService { // 使用獨體
+export default class ProductService {
 
     connection: mysql.Pool;
 
-    private static instance: ProductService;
     private static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
 
-    private constructor() {
+    constructor() {
         this.connection = MySQLConnectionPool.getPool();
     }
 
-    static getInstance() {
-
-        if (typeof ProductService.instance === "undefined") {
-            ProductService.instance = new ProductService();
-        }
-
-        return ProductService.instance;
-    }
-
     changeDBTo(dbName: string) {
-
         this.connection = MySQLConnectionPool.getPool(dbName);
     }
 

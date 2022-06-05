@@ -29,6 +29,7 @@ class ProductRoutes {
     };
 
     uploadFile: multer.Multer = multer();
+    productService = new ProductService();
 
     constructor() {
         this.intializeRoutes();
@@ -45,18 +46,16 @@ class ProductRoutes {
 
     //Todo 需消毒輸入參數
     async addNewProduct(req: Request, res: Response, next: NextFunction) {
-        
+
         try {
 
-        let productService = ProductService.getInstance();
+            let product_name = req.body.name;
+            let create_user_id = req.body.create_user_id;
+            let price = req.body.price;
+            let describe = req.body.describe;
 
-        let product_name = req.body.name;
-        let create_user_id = req.body.create_user_id;
-        let price = req.body.price;
-        let describe = req.body.describe;
 
-        
-            await productService.addProduct(product_name, create_user_id, price, describe);
+            await this.productService.addProduct(product_name, create_user_id, price, describe);
             return res.status(201).end();
         } catch (err) {
             return next(err);
@@ -66,14 +65,13 @@ class ProductRoutes {
 
     async getProductById(req: Request, res: Response, next: NextFunction) { // 這裡就要去拿到照片
         try {
-            let productService = ProductService.getInstance();
 
             let productId: number = Number(req.params.id);
             if (Number.isNaN(productId)) {
                 throw Error("params.id is not number");
             }
 
-            let result = await productService.findProductById(productId);
+            let result = await this.productService.findProductById(productId);
             return res.send(result);
         } catch (err) {
             return next(err);
@@ -83,9 +81,9 @@ class ProductRoutes {
     async getAllProduct(req: Request, res: Response, next: NextFunction) {
 
         try {
-            let productService = ProductService.getInstance();
 
-            let result = await productService.findAllProduct();
+
+            let result = await this.productService.findAllProduct();
             return res.send(result);
         } catch (err) {
             return next(err);
@@ -96,7 +94,7 @@ class ProductRoutes {
     async addProductImg(req: any, res: Response, next: NextFunction) {
 
         try {
-            let productService = ProductService.getInstance();
+
 
             let productId: number = Number(req.params.id);
             if (Number.isNaN(productId)) {
@@ -106,7 +104,7 @@ class ProductRoutes {
             if (typeof req.file === "undefined" ||
                 typeof req.file.buffer === "undefined" ||
                 typeof req.file.originalname === "undefined") {
-                   
+
                 throw Error("error in upload file");
             }
 
@@ -115,7 +113,7 @@ class ProductRoutes {
             }
 
 
-            await productService.addProductImg(productId, req.file.buffer, req.file.originalname);
+            await this.productService.addProductImg(productId, req.file.buffer, req.file.originalname);
             return res.status(201).end();
         } catch (err) {
             return next(err);
