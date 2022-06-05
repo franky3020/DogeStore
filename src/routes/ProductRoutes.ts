@@ -1,7 +1,7 @@
 
 import { Router } from 'express';
 
-import { validate, ValidationError, Joi } from "express-validation";
+import { validate, Joi } from "express-validation";
 import { Request, Response, NextFunction } from 'express';
 
 import ProductService from "../service/ProductService";
@@ -29,12 +29,10 @@ class ProductRoutes {
     };
 
     uploadFile: multer.Multer = multer();
-    productService: ProductService;
+    productService = new ProductService();
 
     constructor() {
-        this.productService = new ProductService();
         this.intializeRoutes();
-        
     }
 
     intializeRoutes() {
@@ -46,9 +44,7 @@ class ProductRoutes {
     }
 
 
-    //Todo 需消毒輸入參數
-    async addNewProduct(req: Request, res: Response, next: NextFunction) {
-
+    addNewProduct = async(req: Request, res: Response, next: NextFunction) => {
         try {
 
             let product_name = req.body.name;
@@ -62,10 +58,9 @@ class ProductRoutes {
         } catch (err) {
             return next(err);
         }
-
     }
 
-    async getProductById(req: Request, res: Response, next: NextFunction) { // 這裡就要去拿到照片
+    getProductById = async(req: Request, res: Response, next: NextFunction) => { // 這裡就要去拿到照片
         try {
 
             let productId: number = Number(req.params.id);
@@ -80,7 +75,7 @@ class ProductRoutes {
         }
     }
 
-    async getAllProduct(req: Request, res: Response, next: NextFunction) {
+    getAllProduct = async(req: Request, res: Response, next: NextFunction) => {
 
         try {
 
@@ -93,7 +88,7 @@ class ProductRoutes {
     }
 
     // req.file.buffer, req.file.originalname 會從 uploadFile.single('uploaded_file') 提供
-    async addProductImg(req: any, res: Response, next: NextFunction) {
+    addProductImg = async(req: any, res: Response, next: NextFunction) => {
 
         try {
 
@@ -122,9 +117,6 @@ class ProductRoutes {
         }
 
     }
-
-
-
 
 }
 
