@@ -63,6 +63,14 @@ export default class UserService {
         let userDAO = new UserDAO(this.connection);
 
 
+
+        let isUserExist = await this.checkUserEmailExist(email);
+        if(isUserExist) {
+            throw Error("user is exist");
+        }
+
+
+
         let hashPassword = await this.bcryptPassword(password);
 
         if(typeof id === "undefined") {
@@ -86,7 +94,17 @@ export default class UserService {
         return bcrypt.compare(password, hash);
     }
 
-    
+    async checkUserEmailExist(email: string): Promise<boolean> {
+
+        let userDAO = new UserDAO(this.connection);
+        let user: User|null= await userDAO.findByEmail(email);
+
+        if(user) {
+            return true;
+        }
+        return false;
+
+    }
 
 
 
