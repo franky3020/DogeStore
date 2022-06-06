@@ -4,7 +4,7 @@ import User from "../entity/User";
 
 export default class UserDAO {
 
-    connection: mysql.Pool;
+    private connection: mysql.Pool;
 
     constructor(connection: mysql.Pool) {
         this.connection = connection;

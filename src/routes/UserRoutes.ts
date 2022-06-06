@@ -11,7 +11,7 @@ class UserRoutes {
 
     router = Router();
 
-    userLoginValidation = {
+    private userLoginValidation = {
         body: Joi.object({
             email: Joi.string()
                 .required(),
@@ -20,18 +20,19 @@ class UserRoutes {
         }),
     };
 
-    userService: UserService = new UserService();;
+    private userService: UserService = new UserService();;
 
     constructor() {
         this.intializeRoutes();
     }
 
     intializeRoutes() {
-        this.router.route('/login').post(validate(this.userLoginValidation), this.getUserJWT);
+        // 需要使用 bind 在 呼叫同類別的方法
+        this.router.route('/login').post(validate(this.userLoginValidation), this.getUserJWT.bind(this));
     }
 
 
-    getUserJWT = async (req: Request, res: Response, next: NextFunction) => {
+    async getUserJWT(req: Request, res: Response, next: NextFunction) {
         try {
             let email = req.body.email;
             let password = req.body.password;

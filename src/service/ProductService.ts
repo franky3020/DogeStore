@@ -10,7 +10,7 @@ import path from "path";
 
 export default class ProductService {
 
-    connection: mysql.Pool;
+    private connection: mysql.Pool;
 
     private static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
 

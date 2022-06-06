@@ -5,7 +5,6 @@ import path from "path";
 
 import User from "../entity/User";
 import Product from "../entity/Product";
-import UserDAO from "../repositories/UserDAO";
 import ProductDAO from "../repositories/ProductDAO";
 import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
