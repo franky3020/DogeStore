@@ -4,7 +4,7 @@ import 'dotenv/config';
 
 export default class MySQLConnectionPool {
 
-    static existDatabasePool:{ [key: string]: mysql.Pool } = {};
+    private static existDatabasePool:{ [key: string]: mysql.Pool } = {};
 
     static getPool(databaseName?: string): mysql.Pool {
 

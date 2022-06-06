@@ -5,7 +5,7 @@ import mysql from "mysql2";
 
 export default class ProductDAO {
 
-    connection: mysql.Pool;
+    private connection: mysql.Pool;
 
     constructor(connection: mysql.Pool) {
         this.connection = connection;

@@ -12,7 +12,7 @@ const jwt = require("jsonwebtoken");
 
 export default class UserService {
 
-    connection :mysql.Pool;
+    private connection :mysql.Pool;
 
 
     constructor() {
