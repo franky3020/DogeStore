@@ -15,7 +15,7 @@ class ProductRoutes {
 
     router = Router();
 
-    productValidation = {
+    private productValidation = {
         body: Joi.object({
             name: Joi.string()
                 .required(),
@@ -28,23 +28,23 @@ class ProductRoutes {
         }),
     };
 
-    uploadFile: multer.Multer = multer();
-    productService = new ProductService();
+    private uploadFile: multer.Multer = multer();
+    private productService = new ProductService();
 
     constructor() {
         this.intializeRoutes();
     }
 
     intializeRoutes() {
-        this.router.route('/:id').get(this.getProductById);
-        this.router.route('/').get(this.getAllProduct);
-        this.router.route('/').post(authentication, validate(this.productValidation), this.addNewProduct);
-        this.router.route('/:id/upload').post(authentication, this.uploadFile.single('uploaded_file'), this.addProductImg);
+        this.router.route('/:id').get(this.getProductById.bind(this));
+        this.router.route('/').get(this.getAllProduct.bind(this));
+        this.router.route('/').post(authentication, validate(this.productValidation), this.addNewProduct.bind(this));
+        this.router.route('/:id/upload').post(authentication, this.uploadFile.single('uploaded_file'), this.addProductImg.bind(this));
 
     }
 
 
-    addNewProduct = async(req: Request, res: Response, next: NextFunction) => {
+    async addNewProduct(req: Request, res: Response, next: NextFunction) {
         try {
 
             let product_name = req.body.name;
@@ -60,7 +60,7 @@ class ProductRoutes {
         }
     }
 
-    getProductById = async(req: Request, res: Response, next: NextFunction) => { // 這裡就要去拿到照片
+    async getProductById(req: Request, res: Response, next: NextFunction) { // 這裡就要去拿到照片
         try {
 
             let productId: number = Number(req.params.id);
@@ -75,7 +75,7 @@ class ProductRoutes {
         }
     }
 
-    getAllProduct = async(req: Request, res: Response, next: NextFunction) => {
+    async getAllProduct(req: Request, res: Response, next: NextFunction) {
 
         try {
 
@@ -88,7 +88,7 @@ class ProductRoutes {
     }
 
     // req.file.buffer, req.file.originalname 會從 uploadFile.single('uploaded_file') 提供
-    addProductImg = async(req: any, res: Response, next: NextFunction) => {
+    async addProductImg(req: any, res: Response, next: NextFunction) {
 
         try {
 
