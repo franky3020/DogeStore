@@ -20,6 +20,20 @@ class UserRoutes {
         }),
     };
 
+    private userRegisterValidation = {
+        body: Joi.object({
+            email: Joi.string()
+                .required(),
+            password: Joi.string()
+                .required(),
+            nickname: Joi.string()
+                .required()
+        }),
+    };
+
+
+
+
     private userService: UserService = new UserService();;
 
     constructor() {
@@ -29,6 +43,7 @@ class UserRoutes {
     intializeRoutes() {
         // 需要使用 bind 在 呼叫同類別的方法
         this.router.route('/login').post(validate(this.userLoginValidation), this.getUserJWT.bind(this));
+        this.router.route('/register').post(validate(this.userRegisterValidation), this.userRegister.bind(this));
     }
 
 
@@ -48,6 +63,23 @@ class UserRoutes {
             } else {
                 res.status(401).end();
             }
+
+        } catch (err) {
+            next(err);
+        }
+    }
+
+
+
+    async userRegister(req: Request, res: Response, next: NextFunction) {
+        try {
+            let email = req.body.email;
+            let password = req.body.password;
+            let nickname = req.body.nickname;
+
+            await this.userService.addNewUser(email, nickname, password);
+
+            return res.status(201).end();
 
         } catch (err) {
             next(err);
