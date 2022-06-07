@@ -93,5 +93,10 @@ export default class ProductService {
         return products_json;
     }
 
+    async deleteProductById(id: number): Promise<void> {
+        let productDAO = new ProductDAO(this.connection);
+        await productDAO.deleteById(id);
+    }
+
 
 }

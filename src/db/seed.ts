@@ -28,7 +28,7 @@ export async function insertFakeData(databaseName: string) {
 
     let connectPool = MySQLConnectionPool.getPool(databaseName);
 
-    const user_init = new User(1,"u_email", "franky", "ya");
+    const user_init = new User(1,"test@gmail.com", "franky", "12345678");
 
     // 一定要先有user 因為外健限制
     let userService = new UserService();

@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 import ProductService from "../service/ProductService";
 
 import { authentication } from "../middleware/jwtAuth";
+import isAdmin from "../middleware/isAdmin";
 
 import multer from "multer";
 
@@ -36,11 +37,16 @@ class ProductRoutes {
     }
 
     intializeRoutes() {
+        // Get
         this.router.route('/:id').get(this.getProductById.bind(this));
         this.router.route('/').get(this.getAllProduct.bind(this));
-        this.router.route('/').post(authentication, validate(this.productValidation), this.addNewProduct.bind(this));
-        this.router.route('/:id/upload').post(authentication, this.uploadFile.single('uploaded_file'), this.addProductImg.bind(this));
 
+        // Post
+        this.router.route('/').post(authentication, isAdmin, validate(this.productValidation), this.addNewProduct.bind(this));
+        this.router.route('/:id/upload').post(authentication, isAdmin, this.uploadFile.single('uploaded_file'), this.addProductImg.bind(this));
+        
+        // Delete
+        this.router.route('/:id').delete(authentication, isAdmin, this.deleteProductById.bind(this));
     }
 
 
@@ -117,6 +123,23 @@ class ProductRoutes {
         }
 
     }
+
+    async deleteProductById(req: Request, res: Response, next: NextFunction) {
+
+        try {
+            let productId: number = Number(req.params.id);
+            if (Number.isNaN(productId)) {
+                throw Error("params.id is not number");
+            }
+
+            await this.productService.deleteProductById(productId);
+            return res.status(200).end();
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+
 
 }
 
