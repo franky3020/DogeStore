@@ -19,12 +19,14 @@ class ProductRoutes {
     private productValidation = {
         body: Joi.object({
             name: Joi.string()
+                .max(50)
                 .required(),
             create_user_id: Joi.number()
                 .required(),
             price: Joi.number()
                 .required(),
             describe: Joi.string()
+                .max(1000)
                 .required()
         }),
     };
@@ -112,11 +114,11 @@ class ProductRoutes {
             }
 
             if (req.file.originalname === "") {
-                throw Error("file can't not name");
+                throw Error("file can't not has name");
             }
 
-
-            await this.productService.addProductImg(productId, req.file.buffer, req.file.originalname);
+            // TODO: 目前只支援png
+            await this.productService.addProductImg(productId, req.file.buffer, "product_publicimg.png");
             return res.status(201).end();
         } catch (err) {
             return next(err);
