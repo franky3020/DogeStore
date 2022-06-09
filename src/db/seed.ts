@@ -20,7 +20,9 @@ export async function initAlltables(databaseName: string) {
 
     await seedDBFromSQLFile.createTable(path.join(__dirname, "./User.sql"));
     await seedDBFromSQLFile.createTable(path.join(__dirname, "./Product.sql"));
-    await seedDBFromSQLFile.createTable(path.join(__dirname, "./BuyList.sql"));
+    await seedDBFromSQLFile.createTable(path.join(__dirname, "./PurchaseList.sql"));
+
+    
     // await seedDBFromSQLFile.createTable(path.join(__dirname, "./Order.sql"));
     // await seedDBFromSQLFile.createTable(path.join(__dirname, "./Order_Product_jt.sql"));
 }
