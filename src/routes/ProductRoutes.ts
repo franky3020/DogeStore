@@ -46,7 +46,7 @@ class ProductRoutes {
         // Post
         this.router.route('/').post(authentication, isAdmin, validate(this.productValidation), this.addNewProduct.bind(this));
         this.router.route('/:id/upload').post(authentication, isAdmin, this.uploadFile.single('uploaded_file'), this.addProductImg.bind(this));
-        
+
         // Delete
         this.router.route('/:id').delete(authentication, isAdmin, this.deleteProductById.bind(this));
     }

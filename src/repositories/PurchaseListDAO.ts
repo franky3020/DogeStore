@@ -12,22 +12,7 @@ export default class BuyListDAO {
     }
 
     async create(user_id: number, purchase_time: Date, products_id: number): Promise<any> {
-       
-        
         await this.insertProductToList(user_id, purchase_time, products_id);
-       
-        // let allInsertPromise = [];
-        // for (let id of products_id) {
-        //     allInsertPromise.push(this.insertProductToList(user_id, id, purchase_time));
-        // }
-
-        // try {
-        //     await Promise.all(allInsertPromise);
-        // } catch(err) {
-
-        // }
-
-
     }
 
     insertProductToList(user_id: number, purchase_time: Date, product_id: number): Promise<any> {
@@ -38,7 +23,7 @@ export default class BuyListDAO {
         return this.connection.promise().query(sql, [user_id, product_id, purchase_time_Date]);
     }
 
-    findUserPurchase(user_id: number): Promise<Product[]|null> {
+    findUserPurchase(user_id: number): Promise<Product[] | null> {
 
         let returnProducts: Product[] = [];
 
@@ -49,25 +34,25 @@ export default class BuyListDAO {
                 let sql = "SELECT `Products`.* FROM `PurchaseList` INNER JOIN `Products` \
                            ON `PurchaseList`.`product_id` = `Products`.`id` WHERE `user_id` = ?";
                 [rows, fields] = await this.connection.promise().query(sql, [user_id]);
-            } catch(err) {
+            } catch (err) {
                 return reject(err);
             }
 
             let products_id: number[] = JSON.parse(JSON.stringify(rows));
 
-            
+
             if (products_id.length === 0) {
                 return resolve(null);
             }
 
             let jResult = JSON.parse(JSON.stringify(rows));
 
-            for(const product of jResult as Product[]) {
+            for (const product of jResult as Product[]) {
                 returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
             }
 
             return resolve(returnProducts);
-            
+
 
         })
 

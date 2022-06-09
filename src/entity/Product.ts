@@ -12,11 +12,11 @@ class Product {
         this.create_user_id = create_user_id;
         this.price = price;
         this.describe = describe;
-        
+
 
         this.id = id;
 
-        if ( photos ) {
+        if (photos) {
             this.photos = photos;
         } else {
             this.photos = new Array(); // Lazy initialization
@@ -28,35 +28,35 @@ class Product {
 
         let outStr = "";
 
-        if(this.id) {
+        if (this.id) {
             let idNum = this.id as number;
             outStr += "id: " + idNum.toString() + '\n';
         }
-        
 
-        let nameStr: string = "name: " + this.name + "\n"; 
+
+        let nameStr: string = "name: " + this.name + "\n";
         outStr += nameStr;
-        
-        let priceStr: string = "price: " + this.price + "\n"; 
+
+        let priceStr: string = "price: " + this.price + "\n";
         outStr += priceStr;
 
-        let describeStr: string = "describe: " + this.describe + "\n"; 
+        let describeStr: string = "describe: " + this.describe + "\n";
         outStr += describeStr;
-        
+
         let photosStr: string = "photos: [ ";
-        for(const [index, photo] of this.photos.entries()) { // photos: [ 1_URL, 2_URL ]
-            if ( index === 0 ) {
-                photosStr += photo ;
+        for (const [index, photo] of this.photos.entries()) { // photos: [ 1_URL, 2_URL ]
+            if (index === 0) {
+                photosStr += photo;
                 continue;
-            } 
-            photosStr += ', ' + photo ;
+            }
+            photosStr += ', ' + photo;
         }
         photosStr += " ]\n";
         outStr += photosStr;
 
 
 
-        
+
         return outStr;
 
     }

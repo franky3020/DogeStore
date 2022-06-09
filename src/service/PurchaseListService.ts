@@ -21,8 +21,8 @@ export default class PurchaseListService {
     changeDBTo(dbName: string) {
         this.connection = MySQLConnectionPool.getPool(dbName);
     }
-    
-    
+
+
     async addProductToPurchaseList(user_id: number, product_id: number) {
 
         let nowUTCDate = new Date();

@@ -32,13 +32,13 @@ class PurchaseRouter {
 
         // Post
         this.router.route('/').post(authentication, validate(this.purchaseValidation), this.addPurchasetList.bind(this));
-       
+
     }
 
     async addPurchasetList(req: any, res: Response, next: NextFunction) {
         try {
 
-            
+
             let user_id = req.authUserID;
             let product_id = req.body.product_id;
 

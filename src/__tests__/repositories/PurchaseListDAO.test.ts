@@ -6,7 +6,7 @@ import UserDAO from "../../repositories/UserDAO";
 
 import { deletesDatabase } from "../../db/db";
 
-import {initAlltables} from "../../db/seed";
+import { initAlltables } from "../../db/seed";
 import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 import ProductDAO from "../../repositories/ProductDAO";
 
@@ -18,7 +18,7 @@ let userDAO: UserDAO;
 let purchaseListDAO: PurchaseListDAO;
 let productDAO: ProductDAO;
 
-const user_init = new User(1,"u_email", "franky", "ya");
+const user_init = new User(1, "u_email", "franky", "ya");
 
 const p1_init: Product = new Product(1, "p_1", 1, 200, "p_d");
 const p2_init: Product = new Product(2, "p_2", 1, 200, "p_d");
@@ -49,9 +49,9 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
 
 });
 
-describe("purchaseListDAO CRUD", ()=>{
+describe("purchaseListDAO CRUD", () => {
 
-    test("create a purchaseList", async ()=> {
+    test("create a purchaseList", async () => {
 
         let now_date = new Date();
         now_date.setMilliseconds(0); // 因DB 沒存秒數
@@ -61,7 +61,7 @@ describe("purchaseListDAO CRUD", ()=>{
 
         expect(products).not.toBe(null);
 
-        if(products) {
+        if (products) {
             expect(products.length).toBe(1);
         }
 
