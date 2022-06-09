@@ -1,6 +1,6 @@
 import mysql from "mysql2";
 import MySQLConnectionPool from "../../db/MySQLConnectionPool";
-import {initAlltables} from "../../db/seed";
+import { initAlltables } from "../../db/seed";
 import { deletesDatabase } from "../../db/db";
 import UserDAO from "../../repositories/UserDAO";
 import User from "../../entity/User";
@@ -26,11 +26,11 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
 
 });
 
-describe("MySQLConnectionPool", ()=>{
+describe("MySQLConnectionPool", () => {
 
-    test("end not exist database name ", ()=> {
-        
-        expect(()=>{
+    test("end not exist database name ", () => {
+
+        expect(() => {
             MySQLConnectionPool.endPool("noExist");
         }).toThrow();
 

@@ -20,8 +20,11 @@ export async function initAlltables(databaseName: string) {
 
     await seedDBFromSQLFile.createTable(path.join(__dirname, "./User.sql"));
     await seedDBFromSQLFile.createTable(path.join(__dirname, "./Product.sql"));
-    await seedDBFromSQLFile.createTable(path.join(__dirname, "./Order.sql"));
-    await seedDBFromSQLFile.createTable(path.join(__dirname, "./Order_Product_jt.sql"));
+    await seedDBFromSQLFile.createTable(path.join(__dirname, "./PurchaseList.sql"));
+
+
+    // await seedDBFromSQLFile.createTable(path.join(__dirname, "./Order.sql"));
+    // await seedDBFromSQLFile.createTable(path.join(__dirname, "./Order_Product_jt.sql"));
 }
 
 export async function insertFakeData(databaseName: string) {
@@ -30,20 +33,20 @@ export async function insertFakeData(databaseName: string) {
 
     let connectPool = MySQLConnectionPool.getPool(databaseName);
 
-    const user_init = new User(1,"test@gmail.com", "franky", "12345678");
+    const user_init = new User(1, "test@gmail.com", "franky", "12345678");
 
     // 一定要先有user 因為外健限制
     let userService = new UserService();
     await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
 
 
-    
+
     const product_init_1 = new Product(1, "product_init_1", 1, 100, "m");
     const product_init_2 = new Product(2, "product_init_2", 1, 200, "m");
     const product_init_3 = new Product(3, "product_init_3", 1, 300, "m");
 
     let productDAO = new ProductDAO(connectPool);
-    
+
     await Promise.all([
         productDAO.create(product_init_1),
         productDAO.create(product_init_2),
@@ -52,11 +55,11 @@ export async function insertFakeData(databaseName: string) {
 }
 
 if (require.main === module) {
-    initAlltables("db_create_from_seed").then(()=>{
+    initAlltables("db_create_from_seed").then(() => {
         console.log("over")
         MySQLConnectionPool.endPool("db_create_from_seed");
     });
-} 
+}
 
 
 

@@ -46,7 +46,7 @@ class ProductRoutes {
         // Post
         this.router.route('/').post(authentication, isAdmin, validate(this.productValidation), this.addNewProduct.bind(this));
         this.router.route('/:id/upload').post(authentication, isAdmin, this.uploadFile.single('uploaded_file'), this.addProductImg.bind(this));
-        
+
         // Delete
         this.router.route('/:id').delete(authentication, isAdmin, this.deleteProductById.bind(this));
     }
@@ -56,7 +56,7 @@ class ProductRoutes {
         try {
 
             let product_name = req.body.name;
-            let create_user_id = req.body.create_user_id;
+            let create_user_id = req.body.create_user_id; // TODO: 改成從 jwt 拿資料
             let price = req.body.price;
             let describe = req.body.describe;
 

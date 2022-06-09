@@ -12,7 +12,7 @@ const jwt = require("jsonwebtoken");
 
 export default class UserService {
 
-    private connection :mysql.Pool;
+    private connection: mysql.Pool;
 
 
     constructor() {
@@ -25,14 +25,14 @@ export default class UserService {
 
     // Todo JWT 的簽名 應該獨立出來, 因為簽名的欄位 要放在一起管裡, 不能每次都來這裡查看
     // 要有服務專門簽使用者 與 驗證使用者
-    async getUserJWT(email: string, password: string): Promise<string|null> {
+    async getUserJWT(email: string, password: string): Promise<string | null> {
 
         let isLogin = await this.checkUserPassword(email, password);
-        if(isLogin) {
+        if (isLogin) {
             let userDAO = new UserDAO(this.connection);
-            let user: User|null= await userDAO.findByEmail(email);
+            let user: User | null = await userDAO.findByEmail(email);
 
-            if(user) {
+            if (user) {
                 let id = user.id;
                 let nickname = user.nickname;
                 const token = jwt.sign({ id, email, nickname }, process.env.JWT_PRIVATE_KEY);
@@ -48,9 +48,9 @@ export default class UserService {
 
 
         let userDAO = new UserDAO(this.connection);
-        let user: User|null= await userDAO.findByEmail(email);
+        let user: User | null = await userDAO.findByEmail(email);
 
-        if(user) {
+        if (user) {
             let isUserLogin = await this.bcryptComparePassword(password, user.password);
             return isUserLogin;
         }
@@ -65,7 +65,7 @@ export default class UserService {
 
 
         let isUserExist = await this.checkUserEmailExist(email);
-        if(isUserExist) {
+        if (isUserExist) {
             throw Error("user is exist");
         }
 
@@ -73,14 +73,14 @@ export default class UserService {
 
         let hashPassword = await this.bcryptPassword(password);
 
-        if(typeof id === "undefined") {
+        if (typeof id === "undefined") {
             let user = new User(null, email, nickname, hashPassword);
             await userDAO.create(user);
         } else {
             let user = new User(id, email, nickname, hashPassword);
             await userDAO.create(user);
         }
-        
+
 
     }
 
@@ -97,9 +97,9 @@ export default class UserService {
     async checkUserEmailExist(email: string): Promise<boolean> {
 
         let userDAO = new UserDAO(this.connection);
-        let user: User|null= await userDAO.findByEmail(email);
+        let user: User | null = await userDAO.findByEmail(email);
 
-        if(user) {
+        if (user) {
             return true;
         }
         return false;
@@ -114,12 +114,12 @@ export default class UserService {
     //     await productDAO.create(product);
     // }
 
-    
+
 
     // async findAllProduct(): Promise<[]> {
     //         let productDAO = new ProductDAO(this.connection);
     //         let products: Product[]= await productDAO.findAll();
-        
+
     //         let products_json = JSON.parse(JSON.stringify(products));
     //         return products_json;
     // }

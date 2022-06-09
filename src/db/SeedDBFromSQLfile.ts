@@ -5,12 +5,12 @@ import fs from "fs";
 export default class SeedDBFromSQLFile {
 
     private connection: mysql.Pool;
-    
+
     constructor(connection: mysql.Pool) {
         this.connection = connection;
     }
 
-    async createTable(sqlFilePath: string) :Promise<any> {
+    async createTable(sqlFilePath: string): Promise<any> {
         let connection = this.connection;
 
         let data = await fs.promises.readFile(sqlFilePath, 'utf8');
@@ -23,7 +23,7 @@ export default class SeedDBFromSQLFile {
         let connection = this.connection;
 
         let sql = "DROP TABLE IF EXISTS `" + tableName + "`";
-        
+
         return connection.promise().query(sql);
     }
 
