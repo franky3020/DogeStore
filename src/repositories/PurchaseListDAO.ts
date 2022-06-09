@@ -11,10 +11,6 @@ export default class BuyListDAO {
         this.connection = connection;
     }
 
-    async create(user_id: number, purchase_time: Date, products_id: number): Promise<any> {
-        await this.insertProductToList(user_id, purchase_time, products_id);
-    }
-
     insertProductToList(user_id: number, purchase_time: Date, product_id: number): Promise<any> {
 
         let purchase_time_Date = purchase_time.toISOString().slice(0, 19).replace('T', ' ');

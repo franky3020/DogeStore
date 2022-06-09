@@ -44,7 +44,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
-    // await deletesDatabase(testDatabaseName);
+    await deletesDatabase(testDatabaseName);
     MySQLConnectionPool.endPool(testDatabaseName);
 
 });
@@ -56,7 +56,7 @@ describe("purchaseListDAO CRUD", () => {
         let now_date = new Date();
         now_date.setMilliseconds(0); // 因DB 沒存秒數
 
-        await purchaseListDAO.create(1, now_date, 2);
+        await purchaseListDAO.insertProductToList(1, now_date, 2);
         let products = await purchaseListDAO.findUserPurchase(1);
 
         expect(products).not.toBe(null);

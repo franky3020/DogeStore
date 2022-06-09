@@ -2,8 +2,6 @@
 
 import PurchaseListDAO from "../repositories/PurchaseListDAO";
 import mysql from "mysql2";
-
-import Product from "../entity/Product";
 import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
 export default class PurchaseListService {
@@ -26,7 +24,17 @@ export default class PurchaseListService {
     async addProductToPurchaseList(user_id: number, product_id: number) {
 
         let nowUTCDate = new Date();
-        await this.purchaseListDAO.create(user_id, nowUTCDate, product_id)
+        await this.purchaseListDAO.insertProductToList(user_id, nowUTCDate, product_id)
+    }
+
+    async getUserPurchaseList(user_id: number): Promise<object> {
+
+        let products = await this.purchaseListDAO.findUserPurchase(user_id);
+
+        let products_json = JSON.parse(JSON.stringify(products));
+
+        return products_json;
+
     }
 
 

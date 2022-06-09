@@ -30,8 +30,12 @@ class PurchaseRouter {
 
     intializeRoutes() {
 
+        // Get
+        this.router.route('/').get(authentication, this.getUserPurchaseList.bind(this));
+        
         // Post
         this.router.route('/').post(authentication, validate(this.purchaseValidation), this.addPurchasetList.bind(this));
+
 
     }
 
@@ -45,6 +49,18 @@ class PurchaseRouter {
 
             await this.purchaseListService.addProductToPurchaseList(user_id, product_id);
             return res.status(201).end();
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+    async getUserPurchaseList(req: any, res: Response, next: NextFunction) {
+        try {
+
+            let user_id = req.authUserID;
+
+            let products_json = await this.purchaseListService.getUserPurchaseList(user_id);
+            return res.send(products_json);
         } catch (err) {
             return next(err);
         }
