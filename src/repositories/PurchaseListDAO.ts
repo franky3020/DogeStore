@@ -11,17 +11,26 @@ export default class BuyListDAO {
         this.connection = connection;
     }
 
-    async create(user_id: number, purchase_time: Date, ...products_id: number[]): Promise<any> {
+    async create(user_id: number, purchase_time: Date, products_id: number): Promise<any> {
        
-        let allInsertPromise = [];
-        for (let id of products_id) {
-            allInsertPromise.push(this.insertProductToList(user_id, id, purchase_time));
-        }
+        
+        await this.insertProductToList(user_id, purchase_time, products_id);
+       
+        // let allInsertPromise = [];
+        // for (let id of products_id) {
+        //     allInsertPromise.push(this.insertProductToList(user_id, id, purchase_time));
+        // }
 
-        await Promise.all(allInsertPromise);
+        // try {
+        //     await Promise.all(allInsertPromise);
+        // } catch(err) {
+
+        // }
+
+
     }
 
-    insertProductToList(user_id: number, product_id: number, purchase_time: Date): Promise<any> {
+    insertProductToList(user_id: number, purchase_time: Date, product_id: number): Promise<any> {
 
         let purchase_time_Date = purchase_time.toISOString().slice(0, 19).replace('T', ' ');
 

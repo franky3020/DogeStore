@@ -43,6 +43,7 @@ export default class ProductService {
 
     }
 
+    // TODO: 目前沒地方用到
     getProductImg(product_id: number, fileName: string): Promise<Buffer> {
 
         return new Promise(async (resolve, reject) => {
@@ -62,6 +63,7 @@ export default class ProductService {
 
     }
 
+    // TODO: 目前沒地方用到
     deleteProductImg(product_id: number, fileName: string): Promise<any> {
 
         let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
@@ -77,6 +79,7 @@ export default class ProductService {
         let productDAO = new ProductDAO(this.connection);
         let product: Product | null = await productDAO.findById(id);
 
+        
         let product_json = {};
         if (product) {
             product_json = JSON.parse(JSON.stringify(product));

@@ -56,13 +56,13 @@ describe("purchaseListDAO CRUD", ()=>{
         let now_date = new Date();
         now_date.setMilliseconds(0); // 因DB 沒存秒數
 
-        await purchaseListDAO.create(1, now_date, 2, 3);
+        await purchaseListDAO.create(1, now_date, 2);
         let products = await purchaseListDAO.findUserPurchase(1);
 
         expect(products).not.toBe(null);
 
         if(products) {
-            expect(products.length).toBe(2);
+            expect(products.length).toBe(1);
         }
 
     })

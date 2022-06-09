@@ -3,6 +3,8 @@ import { Response, NextFunction } from 'express';
 import {AuthRequest} from "./AuthRequest";
 import 'dotenv/config';
 
+
+// Add userId in req.authUserID
 export function authentication(req: AuthRequest, res: Response, next: NextFunction) {
 
 
