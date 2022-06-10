@@ -6,3 +6,6 @@ coverage/
 public/productImg/*
 !public/productImg/.gitkeep
 
+product_zip/*
+!product_zip/.gitkeep
+

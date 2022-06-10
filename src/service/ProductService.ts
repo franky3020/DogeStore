@@ -13,6 +13,8 @@ export default class ProductService {
     private connection: mysql.Pool;
 
     private static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
+    private static readonly SAVE_PRODUCT_ZIP_FILE_PATH = path.join(__dirname, "/../../product_zip");
+    private static readonly PRODUCT_ZIP_FILE_NAME = "product.zip";
 
     constructor() {
         this.connection = MySQLConnectionPool.getPool();
@@ -60,6 +62,13 @@ export default class ProductService {
 
         })
 
+
+    }
+
+    getProductZipFilePath(product_id: number): string {
+        let fileName = ProductService.PRODUCT_ZIP_FILE_NAME;
+        let productZipFilePath = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString(), fileName);
+        return productZipFilePath;
 
     }
 

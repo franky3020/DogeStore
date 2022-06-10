@@ -37,6 +37,25 @@ export default class PurchaseListService {
 
     }
 
+    async checkUserhasProduct(user_id: number, product_id: number): Promise<boolean> {
+
+        let products = await this.purchaseListDAO.findUserPurchase(user_id);
+
+        if (products === null || products.length === 0) {
+            return false;
+        }
+
+
+        for (let p of products) {
+            if (p.id === product_id) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
 
 
 
