@@ -45,6 +45,20 @@ export default class ProductService {
 
     }
 
+    async addProductZipFile(product_id: number, zipFile: Buffer): Promise<void> {
+
+        let saveDir = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString());
+            
+        await fs.promises.mkdir(saveDir).catch((err)=>{
+            // do Nothing
+        }); // 故意忽略錯誤
+
+        let fileName = ProductService.PRODUCT_ZIP_FILE_NAME;
+        let filePath = path.join(saveDir, fileName);
+
+        await fs.promises.writeFile(filePath, zipFile);
+    }
+
     // TODO: 目前沒地方用到
     getProductImg(product_id: number, fileName: string): Promise<Buffer> {
 

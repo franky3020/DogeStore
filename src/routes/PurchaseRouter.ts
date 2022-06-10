@@ -9,7 +9,7 @@ import PurchaseListService from "../service/PurchaseListService";
 import { authentication } from "../middleware/jwtAuth";
 import isAdmin from "../middleware/isAdmin";
 import ProductService from "../service/ProductService";
-
+import multer from "multer";
 
 
 class PurchaseRouter {
@@ -17,6 +17,8 @@ class PurchaseRouter {
     router = Router();
 
     private purchaseListService = new PurchaseListService();
+    private uploadFile: multer.Multer = multer();
+
 
     private purchaseValidation = {
         body: Joi.object({
@@ -39,6 +41,7 @@ class PurchaseRouter {
         
         // Post
         this.router.route('/').post(authentication, validate(this.purchaseValidation), this.addPurchasetList.bind(this));
+        this.router.route('/productZipFile/:id').post(authentication, isAdmin ,this.uploadFile.single('uploaded_file'), this.uploadProductZipFile.bind(this));
 
 
     }
@@ -89,6 +92,30 @@ class PurchaseRouter {
                 return res.status(401).end();
             }
 
+
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+    async uploadProductZipFile(req: any, res: Response, next: NextFunction) {
+        try {
+
+            let product_id: number = Number(req.params.id);
+            if (Number.isNaN(product_id)) {
+                throw Error("params.id is not number");
+            }
+
+            if (typeof req.file === "undefined" ||
+                typeof req.file.buffer === "undefined") {
+
+                throw Error("error in upload file");
+            }
+
+
+        
+            await this.productService.addProductZipFile(product_id, req.file.buffer);
+            return res.status(201).end();
 
         } catch (err) {
             return next(err);
