@@ -7,9 +7,10 @@ import { Request, Response, NextFunction } from 'express';
 import PurchaseListService from "../service/PurchaseListService";
 
 import { authentication } from "../middleware/jwtAuth";
-import isAdmin from "../middleware/isAdmin";
+import isAdminMiddleware from "../middleware/isAdmin";
 import ProductService from "../service/ProductService";
 import multer from "multer";
+import {isAdmin} from "../utils/utils";
 
 
 class PurchaseRouter {
@@ -37,11 +38,12 @@ class PurchaseRouter {
 
         // Get
         this.router.route('/').get(authentication, this.getUserPurchaseList.bind(this));
-        this.router.route('/productZipFile/:id').get(authentication, this.getProductZipFile.bind(this));
+
+        this.router.route('/productZipFile/:id').get(authentication, this.isUserhasProductMiddleware.bind(this), this.getProductZipFile.bind(this));
         
         // Post
         this.router.route('/').post(authentication, validate(this.purchaseValidation), this.addPurchasetList.bind(this));
-        this.router.route('/productZipFile/:id').post(authentication, isAdmin ,this.uploadFile.single('uploaded_file'), this.uploadProductZipFile.bind(this));
+        this.router.route('/productZipFile/:id').post(authentication, isAdminMiddleware ,this.uploadFile.single('uploaded_file'), this.uploadProductZipFile.bind(this));
 
 
     }
@@ -76,23 +78,43 @@ class PurchaseRouter {
     async getProductZipFile(req: any, res: Response, next: NextFunction) {
         try {
 
+            let product_id: number = Number(req.params.id);
+            if (Number.isNaN(product_id)) {
+                throw Error("params.id is not number");
+            }
+
+            let file = this.productService.getProductZipFilePath(product_id);
+            return res.download(file);
+
+
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+    async isUserhasProductMiddleware(req: any, res: Response, next: NextFunction) {
+
+
+        try {
+
             let user_id = req.authUserID;
+            if(isAdmin(user_id)) { // Admin have all product
+                return next();
+            }
             
             let product_id: number = Number(req.params.id);
             if (Number.isNaN(product_id)) {
                 throw Error("params.id is not number");
             }
+            
         
             let isUserhasProduct = await this.purchaseListService.checkUserhasProduct(user_id, product_id);
 
-            if(isUserhasProduct) {
-                let file = this.productService.getProductZipFilePath(product_id);
-                return res.download(file);
+            if (isUserhasProduct) {
+                return next();
             } else {
-                return res.status(401).end();
+                next(new Error("you don't have that product"))
             }
-
-
         } catch (err) {
             return next(err);
         }

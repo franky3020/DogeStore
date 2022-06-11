@@ -7,7 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 import ProductService from "../service/ProductService";
 
 import { authentication } from "../middleware/jwtAuth";
-import isAdmin from "../middleware/isAdmin";
+import isAdminMiddleware from "../middleware/isAdmin";
 
 import multer from "multer";
 
@@ -44,11 +44,11 @@ class ProductRoutes {
         this.router.route('/').get(this.getAllProduct.bind(this));
 
         // Post
-        this.router.route('/').post(authentication, isAdmin, validate(this.productValidation), this.addNewProduct.bind(this));
-        this.router.route('/:id/upload').post(authentication, isAdmin, this.uploadFile.single('uploaded_file'), this.addProductImg.bind(this));
+        this.router.route('/').post(authentication, isAdminMiddleware, validate(this.productValidation), this.addNewProduct.bind(this));
+        this.router.route('/:id/upload').post(authentication, isAdminMiddleware, this.uploadFile.single('uploaded_file'), this.addProductImg.bind(this));
 
         // Delete
-        this.router.route('/:id').delete(authentication, isAdmin, this.deleteProductById.bind(this));
+        this.router.route('/:id').delete(authentication, isAdminMiddleware, this.deleteProductById.bind(this));
     }
 
 

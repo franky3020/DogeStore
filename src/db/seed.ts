@@ -34,10 +34,12 @@ export async function insertFakeData(databaseName: string) {
     let connectPool = MySQLConnectionPool.getPool(databaseName);
 
     const user_init = new User(1, "test@gmail.com", "franky", "12345678");
+    const user_init_2 = new User(2, "other@gmail.com", "other", "12345678");
 
     // 一定要先有user 因為外健限制
     let userService = new UserService();
     await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
+    await userService.addNewUser(user_init_2.email, user_init_2.nickname, user_init_2.password, user_init_2.id as number);
 
 
 
