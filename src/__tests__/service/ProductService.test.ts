@@ -1,8 +1,7 @@
-
-
-
 import ProductService from "../../service/ProductService";
 import { deletesDatabase } from "../../db/db";
+import fs from "fs";
+import path from "path";
 
 import ProductDAO from "../../repositories/ProductDAO";
 import Product from "../../entity/Product";
@@ -34,7 +33,7 @@ beforeAll(async () => {
 
 });
 
-afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
+afterAll(async () => {
     await deletesDatabase(testDatabaseName);
     MySQLConnectionPool.endPool(testDatabaseName);
 });
@@ -53,7 +52,7 @@ describe("Product service", ()=>{
     });
 
 
-    test("findProductById", async () => {
+    test("FindProductById", async () => {
   
         
         let product_json = await productService.findProductById(product_init_1.id as number);
@@ -64,7 +63,7 @@ describe("Product service", ()=>{
         
     });
 
-    test("findProductById", async () => {
+    test("Find all product", async () => {
 
         
         let products_json = await productService.findAllProduct();
@@ -75,25 +74,23 @@ describe("Product service", ()=>{
 
     });
 
-    test("add Product image", async () => {
- 
-        
+    test("Add a product image", async () => {
+    
         let createProductId = 0;
         let testString:string = "test-string";
         let createFileName:string = "test.img";
 
-
         try{
             await productService.addProductImg(createProductId, Buffer.from(testString), createFileName);
-            let imgBuffer= await productService.getProductImg(createProductId, createFileName);
 
-            expect(imgBuffer.toString()).toBe(testString);
+            let isImgExist = fs.existsSync(path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, createProductId.toString(), createFileName));
+            expect(isImgExist).toBe(true);
+            
             await productService.deleteProductImg(createProductId, createFileName);
 
         } catch(err) {
             expect(true).toBe(false);
         }
-        
 
     });
     

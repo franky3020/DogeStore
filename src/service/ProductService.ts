@@ -12,7 +12,7 @@ export default class ProductService {
 
     private connection: mysql.Pool;
 
-    private static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
+    static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
     private static readonly SAVE_PRODUCT_ZIP_FILE_PATH = path.join(__dirname, "/../../product_zip");
     private static readonly PRODUCT_ZIP_FILE_NAME = "product.zip";
 
@@ -59,26 +59,6 @@ export default class ProductService {
         await fs.promises.writeFile(filePath, zipFile);
     }
 
-    // TODO: 目前沒地方用到
-    getProductImg(product_id: number, fileName: string): Promise<Buffer> {
-
-        return new Promise(async (resolve, reject) => {
-
-            let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
-            let filePath = path.join(saveDir, fileName);
-
-            try {
-                let data = await fs.promises.readFile(filePath);
-                return resolve(data);
-            } catch(err) {
-                reject(err);
-            }
-
-        })
-
-
-    }
-
     getProductZipFilePath(product_id: number): string {
         let fileName = ProductService.PRODUCT_ZIP_FILE_NAME;
         let productZipFilePath = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString(), fileName);
@@ -86,7 +66,7 @@ export default class ProductService {
 
     }
 
-    // TODO: 目前沒地方用到
+    // TODO: Only test use it
     deleteProductImg(product_id: number, fileName: string): Promise<any> {
 
         let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
