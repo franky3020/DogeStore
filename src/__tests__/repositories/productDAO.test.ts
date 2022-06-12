@@ -1,107 +1,96 @@
 import ProductDAO from "../../repositories/ProductDAO";
 import UserDAO from "../../repositories/UserDAO";
-import mysql from "mysql2";
 import { deletesDatabase } from "../../db/db";
 import Product from "../../entity/Product";
-
-
 import { initAlltables } from "../../db/seed";
 import User from "../../entity/User";
 import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 
-
-let testDatabaseName = "testDatabase_product";
+const testDatabaseName = "testDatabase_product";
 let productDAO: ProductDAO;
 let userDAO: UserDAO;
-
-const user_init = new User(1, "u_email", "franky", "ya");
-
-const p1_init: Product = new Product(55, "p_1", 1, 200, "p_d");
-const p2_init: Product = new Product(66, "p_2", 1, 200, "p_d");
 
 beforeAll(async () => {
     await initAlltables(testDatabaseName);
 
     let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
-
-
     productDAO = new ProductDAO(connectionPool);
-
     userDAO = new UserDAO(connectionPool);
-
-    await userDAO.create(user_init);
-
-    await productDAO.create(p1_init);
-    await productDAO.create(p2_init);
 
 });
 
-afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
+afterAll(async () => {
     await deletesDatabase(testDatabaseName);
     MySQLConnectionPool.endPool(testDatabaseName);
 
 });
 
-describe("Product CRUD", () => {
+const user_init = new User(1, "email", "nickname", "pw");
 
-    test("find p1", async () => {
+const p1_init: Product = new Product(1, "name_1", 1, 100, "describe_1");
+const p2_init: Product = new Product(2, "name_1", 1, 200, "describe_2");
 
-        let p1: Product | null = await productDAO.findById(p1_init.id as number);
+beforeEach(async () => {
 
-        expect(p1).not.toBeNull();
-        if (p1 !== null) {
-            expect(p1).toEqual(p1_init);
-        }
+    await userDAO.create(user_init);
 
-
-    })
-
-    test("findAll", async () => {
-        let products: Product[] = await productDAO.findAll();
-        let expectLength = 2;
-        expect(products.length).toEqual(expectLength);
-    })
-
-    test("not find", async () => {
-        let product = await productDAO.findById(0);
-        expect(product).toBeNull();
-    })
-
-    test("update", async () => {
-
-        let p_updata: Product = new Product(p1_init.id, "updata", 1, 200, "updata");
-
-        await productDAO.update(p_updata);
-
-        let product: Product | null = await productDAO.findById(p1_init.id as number);
-
-        expect(product).not.toBeNull();
-        if (p_updata !== null && product !== null) {
-            expect(product).toEqual(p_updata);
-        }
-
-        await productDAO.update(p1_init);
-
-    })
-
-
-    test("Delete", async () => {
-
-        if (p1_init.id !== null) {
-            await productDAO.deleteById(p1_init.id);
-
-            let product: Product | null = await productDAO.findById(p1_init.id);
-            expect(product).toBeNull();
-
-        }
-
-        await productDAO.create(p1_init);
-
-    })
-
-
-
-
+    await productDAO.create(p1_init);
+    await productDAO.create(p2_init);
 });
+
+afterEach(async () => {
+    await productDAO.deleteById(p1_init.id as number);
+    await productDAO.deleteById(p2_init.id as number);
+
+    // Need no one product fk to that user, then can delete
+    await userDAO.deleteById(user_init.id as number);
+});
+
+
+
+test("find product p1", async () => {
+
+    let p1: Product | null = await productDAO.findById(p1_init.id as number);
+
+    expect(p1).not.toBeNull();
+
+    expect(p1).toEqual(p1_init);
+})
+
+test("findAll", async () => {
+    let products: Product[] = await productDAO.findAll();
+    let expectLength = 2;
+    expect(products.length).toEqual(expectLength);
+})
+
+test("not find", async () => {
+    let not_exist_id = 0;
+    let product = await productDAO.findById(not_exist_id);
+    expect(product).toBeNull();
+})
+
+test("update", async () => {
+
+    let p_updata: Product = new Product(p1_init.id, "updata", 1, 1000, "updata");
+    await productDAO.update(p_updata);
+
+    let product: Product | null = await productDAO.findById(p1_init.id as number);
+
+    expect(product).not.toBeNull();
+    expect(product).toEqual(p_updata);
+})
+
+
+test("Delete", async () => {
+
+    await productDAO.deleteById(p1_init.id as number);
+
+    let product: Product | null = await productDAO.findById(p1_init.id as number);
+    expect(product).toBeNull();
+})
+
+
+
+
 
 

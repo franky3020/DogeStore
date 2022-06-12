@@ -19,7 +19,7 @@ export default class BuyListDAO {
         return this.connection.promise().query(sql, [user_id, product_id, purchase_time_Date]);
     }
 
-    findUserPurchase(user_id: number): Promise<Product[] | null> {
+    findUserPurchase(user_id: number): Promise<Product[]> {
 
         let returnProducts: Product[] = [];
 
@@ -38,7 +38,7 @@ export default class BuyListDAO {
 
 
             if (products_id.length === 0) {
-                return resolve(null); 
+                return resolve([]); 
             }
 
             let jResult = JSON.parse(JSON.stringify(rows));
@@ -52,6 +52,11 @@ export default class BuyListDAO {
 
         })
 
+    }
+
+    deletePurchaseInList(user_id: number, product_id: number): Promise<any> {
+        let sql = "DELETE FROM `PurchaseList` WHERE `user_id` = ? AND `product_id` = ?";
+        return this.connection.promise().query(sql, [user_id, product_id]);
     }
 
 }
