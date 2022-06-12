@@ -58,7 +58,6 @@ export async function insertFakeData(databaseName: string) {
 
 if (require.main === module) {
     initAlltables("db_create_from_seed").then(() => {
-        console.log("over")
         MySQLConnectionPool.endPool("db_create_from_seed");
     });
 }

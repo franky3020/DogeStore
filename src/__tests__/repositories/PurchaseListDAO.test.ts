@@ -28,9 +28,8 @@ afterAll(async () => {
     MySQLConnectionPool.endPool(testDatabaseName);
 });
 
-const user_init = new User(1, "u_email", "franky", "ya");
-
-const p1_init: Product = new Product(1, "p_1", 1, 200, "p_d");
+const user_init = new User(1, "email", "nickname", "pw");
+const p1_init: Product = new Product(1, "name_1", 1, 200, "describe_1");
 
 beforeEach(async () => {
     await userDAO.create(user_init);
@@ -76,5 +75,5 @@ test("When insert same user-product, will throw error", async () => {
     expect(
         purchaseListDAO.insertProductToList(user_init.id as number, now_date, p1_init.id as number)
     ).rejects.toThrow();
- 
+
 })
