@@ -14,6 +14,7 @@ export default class ProductService {
     static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
     static readonly SAVE_PRODUCT_ZIP_FILE_PATH = path.join(__dirname, "/../../product_zip");
     static readonly PRODUCT_ZIP_FILE_NAME = "product.zip";
+    static readonly PRODUCT_IMG_FILE_NAME = "product_publicimg.png";
 
     constructor(productDAO: ProductDAO) {
         this.productDAO = productDAO;
@@ -25,7 +26,7 @@ export default class ProductService {
         await this.productDAO.create(product);
     }
 
-    async addProductImg(product_id: number, imageFile: Buffer, fileName: string): Promise<void> {
+    async addProductImg(product_id: number, imageFile: Buffer): Promise<void> {
 
         let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
             
@@ -34,7 +35,7 @@ export default class ProductService {
         }); // 故意忽略錯誤
 
 
-        let filePath = path.join(saveDir, fileName);
+        let filePath = path.join(saveDir, ProductService.PRODUCT_IMG_FILE_NAME);
         await fs.promises.writeFile(filePath, imageFile);
 
     }
@@ -62,13 +63,11 @@ export default class ProductService {
 
     }
 
-    // TODO: Only test use it
-    deleteProductImg(product_id: number, fileName: string): Promise<any> {
+    deleteProductImg(product_id: number): Promise<any> {
 
         let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
-        let filePath = path.join(saveDir, fileName);
 
-        return fs.promises.rm(filePath, { force: true });
+        return fs.promises.rm(saveDir, {recursive: true});
     }
 
 
@@ -94,6 +93,7 @@ export default class ProductService {
 
     async deleteProductById(id: number): Promise<void> {
         await this.productDAO.deleteById(id);
+        await this.deleteProductImg(id);
     }
 
 

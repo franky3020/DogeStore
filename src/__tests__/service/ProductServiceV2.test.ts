@@ -101,17 +101,16 @@ test("Add a product image and delete", async () => {
 
     let createProductId = 0;
     let testString: string = "test-string";
-    let createFileName: string = "test.img";
+ 
 
+    await productService.addProductImg(createProductId, Buffer.from(testString));
 
-    await productService.addProductImg(createProductId, Buffer.from(testString), createFileName);
-
-    let isImgExist = fs.existsSync(path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, createProductId.toString(), createFileName));
+    let isImgExist = fs.existsSync(path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, createProductId.toString(), ProductService.PRODUCT_IMG_FILE_NAME));
     expect(isImgExist).toBe(true);
 
-    await productService.deleteProductImg(createProductId, createFileName);
+    await productService.deleteProductImg(createProductId);
 
-    isImgExist = fs.existsSync(path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, createProductId.toString(), createFileName));
+    isImgExist = fs.existsSync(path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, createProductId.toString(), ProductService.PRODUCT_IMG_FILE_NAME));
     expect(isImgExist).toBe(false);
 
 

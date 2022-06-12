@@ -59,11 +59,11 @@ class ProductRoutes {
     }
 
 
-    async addNewProduct(req: Request, res: Response, next: NextFunction) {
+    async addNewProduct(req: any, res: Response, next: NextFunction) {
         try {
 
             let product_name = req.body.name;
-            let create_user_id = req.body.create_user_id; // TODO: 改成從 jwt 拿資料
+            let create_user_id = req.authUserID;// from authentication middleware
             let price = req.body.price;
             let describe = req.body.describe;
 
@@ -93,8 +93,6 @@ class ProductRoutes {
     async getAllProduct(req: Request, res: Response, next: NextFunction) {
 
         try {
-
-
             let result = await this.productService.findAllProduct();
             return res.send(result);
         } catch (err) {
@@ -125,7 +123,7 @@ class ProductRoutes {
             }
 
             // TODO: 目前只支援png
-            await this.productService.addProductImg(productId, req.file.buffer, "product_publicimg.png");
+            await this.productService.addProductImg(productId, req.file.buffer);
             return res.status(201).end();
         } catch (err) {
             return next(err);
