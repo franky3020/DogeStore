@@ -2,8 +2,6 @@
 
 import ProductDAO from "../repositories/ProductDAO";
 import Product from "../entity/Product";
-import mysql from "mysql2";
-import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
 import fs from "fs";
 import path from "path";
