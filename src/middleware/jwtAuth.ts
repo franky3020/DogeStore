@@ -2,40 +2,29 @@ var jwt = require('jsonwebtoken');
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from "./AuthRequest";
 import 'dotenv/config';
+import JWTService from "../service/JWTService";
 
 
 // Add userId in req.authUserID
-export function authentication(req: AuthRequest, res: Response, next: NextFunction) {
+export async function authentication(req: AuthRequest, res: Response, next: NextFunction) {
 
-
-    let token = '';
-    try {
-
-        if (typeof req.headers['authorization'] !== "undefined") {
-
-            if (typeof req.headers['authorization'].split(' ')[1] !== "undefined") {
-                token = req.headers['authorization'].split(' ')[1];
-            } else {
-                throw Error("req.headers['authorization'].split(' ')[1] is undefined");
-            }
-
-        }
-
-    } catch (err) {
-        return next(err);
+    if (typeof req.headers['authorization'] === "undefined") {
+        return next(new Error("Not have authorization header"));
     }
 
-    jwt.verify(token, process.env.JWT_PRIVATE_KEY, function (err: any, decoded: any) {
-        if (err) {
-            return res.status(401).json({ message: 'Unauthorized!' });
-        } else {
+    let token = req.headers['authorization'].split(' ')[1];
+    if (typeof token === "undefined") {
+        return next(new Error("req.headers['authorization'].split(' ')[1] is undefined"));
+    }
+   
 
-            if (typeof decoded.id === "number") {
-                req.authUserID = decoded.id;
-                return next();
-            }
-            return next(new Error("decoded.id not number"));
-        }
-    });
+    let user_id = await JWTService.decodedUserJWT2UserId(token);
+    if(user_id === null) {
+        return res.status(401).json({ message: 'Unauthorized!' });
+    } else {
+        req.authUserID = user_id;
+        return next();
+    }
+
 };
 

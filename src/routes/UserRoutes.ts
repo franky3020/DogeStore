@@ -42,7 +42,7 @@ class UserRoutes {
 
 
 
-    private userService: UserService = new UserService();;
+    private userService: UserService = new UserService();
 
     constructor() {
         this.intializeRoutes();
