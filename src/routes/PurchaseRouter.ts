@@ -11,7 +11,8 @@ import isAdminMiddleware from "../middleware/isAdmin";
 import ProductService from "../service/ProductService";
 import multer from "multer";
 import {isAdmin} from "../utils/utils";
-
+import ProductDAO from '../repositories/ProductDAO';
+import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
 class PurchaseRouter {
 
@@ -28,9 +29,15 @@ class PurchaseRouter {
         }),
     };
 
-    private productService = new ProductService();
+    private productService: ProductService;
 
     constructor() {
+        
+        let connection = MySQLConnectionPool.getPool();
+        let productDAO = new ProductDAO(connection);
+        this.productService = new ProductService(productDAO);
+
+
         this.intializeRoutes();
     }
 

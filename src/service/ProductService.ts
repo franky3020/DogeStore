@@ -10,25 +10,21 @@ import path from "path";
 
 export default class ProductService {
 
-    private connection: mysql.Pool;
+    // private connection: mysql.Pool;
+    private productDAO: ProductDAO;
 
     static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
-    private static readonly SAVE_PRODUCT_ZIP_FILE_PATH = path.join(__dirname, "/../../product_zip");
-    private static readonly PRODUCT_ZIP_FILE_NAME = "product.zip";
+    static readonly SAVE_PRODUCT_ZIP_FILE_PATH = path.join(__dirname, "/../../product_zip");
+    static readonly PRODUCT_ZIP_FILE_NAME = "product.zip";
 
-    constructor() {
-        this.connection = MySQLConnectionPool.getPool();
-    }
-
-    changeDBTo(dbName: string) {
-        this.connection = MySQLConnectionPool.getPool(dbName);
+    constructor(productDAO: ProductDAO) {
+        this.productDAO = productDAO;
     }
 
     // Todo photos?: string[] 應該不需要
     async addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]) {
         let product = new Product(null, name, create_user_id, price, describe, photos);
-        let productDAO = new ProductDAO(this.connection);
-        await productDAO.create(product);
+        await this.productDAO.create(product);
     }
 
     async addProductImg(product_id: number, imageFile: Buffer, fileName: string): Promise<void> {
@@ -45,6 +41,7 @@ export default class ProductService {
 
     }
 
+    // Add in (SAVE_PRODUCT_ZIP_FILE_PATH /:id/product.zip)
     async addProductZipFile(product_id: number, zipFile: Buffer): Promise<void> {
 
         let saveDir = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString());
@@ -59,6 +56,7 @@ export default class ProductService {
         await fs.promises.writeFile(filePath, zipFile);
     }
 
+    // Get path like (SAVE_PRODUCT_ZIP_FILE_PATH /:id/product.zip)
     getProductZipFilePath(product_id: number): string {
         let fileName = ProductService.PRODUCT_ZIP_FILE_NAME;
         let productZipFilePath = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString(), fileName);
@@ -78,9 +76,7 @@ export default class ProductService {
 
     async findProductById(id: number): Promise<object> {
 
-
-        let productDAO = new ProductDAO(this.connection);
-        let product: Product | null = await productDAO.findById(id);
+        let product: Product | null = await this.productDAO.findById(id);
 
         
         let product_json = {};
@@ -92,16 +88,14 @@ export default class ProductService {
     }
 
     async findAllProduct(): Promise<[]> {
-        let productDAO = new ProductDAO(this.connection);
-        let products: Product[] = await productDAO.findAll();
+        let products: Product[] = await this.productDAO.findAll();
 
         let products_json = JSON.parse(JSON.stringify(products));
         return products_json;
     }
 
     async deleteProductById(id: number): Promise<void> {
-        let productDAO = new ProductDAO(this.connection);
-        await productDAO.deleteById(id);
+        await this.productDAO.deleteById(id);
     }
 
 
