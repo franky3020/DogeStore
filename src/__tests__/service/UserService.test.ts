@@ -12,13 +12,11 @@ const testDatabaseName = "testDatabase_user_service";
 
 const user_init = new User(1,"u_email", "franky", "ya");
 
-const userService = new UserService();
+const userService = new UserService(testDatabaseName);
 
 beforeAll(async () => {
     await initAlltables(testDatabaseName);
-    userService.changeDBTo(testDatabaseName);
     await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
-
 });
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後

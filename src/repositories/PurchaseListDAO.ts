@@ -38,7 +38,7 @@ export default class BuyListDAO {
 
 
             if (products_id.length === 0) {
-                return resolve([]); 
+                return resolve([]);
             }
 
             let jResult = JSON.parse(JSON.stringify(rows));

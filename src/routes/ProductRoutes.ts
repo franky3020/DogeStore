@@ -10,7 +10,8 @@ import { authentication } from "../middleware/jwtAuth";
 import isAdminMiddleware from "../middleware/isAdmin";
 
 import multer from "multer";
-
+import ProductDAO from '../repositories/ProductDAO';
+import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
 class ProductRoutes {
 
@@ -32,9 +33,15 @@ class ProductRoutes {
     };
 
     private uploadFile: multer.Multer = multer();
-    private productService = new ProductService();
+    private productService: ProductService;
 
     constructor() {
+
+        let connection = MySQLConnectionPool.getPool();
+        let productDAO = new ProductDAO(connection);
+        this.productService = new ProductService(productDAO);
+
+
         this.intializeRoutes();
     }
 

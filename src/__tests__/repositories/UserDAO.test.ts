@@ -58,7 +58,7 @@ test("Not find user", async () => {
     let not_exist_id = 0;
     let user = await userDAO.findById(not_exist_id);
     expect(user).toBeNull();
-   
+
 })
 
 test("Update user", async () => {

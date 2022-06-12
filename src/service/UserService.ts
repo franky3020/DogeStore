@@ -1,43 +1,39 @@
-
-
 import mysql from "mysql2";
 import MySQLConnectionPool from "../db/MySQLConnectionPool";
 import UserDAO from "../repositories/UserDAO";
-
 import User from "../entity/User";
-import 'dotenv/config';
 
+import JWTService from "./JWTService";
 const bcrypt = require('bcrypt');
-const jwt = require("jsonwebtoken");
 
 export default class UserService {
 
     private connection: mysql.Pool;
+    private userDAO: UserDAO;
 
+    static readonly PASSWORD_SALT_ROUNDS = 10;
 
-    constructor() {
-        this.connection = MySQLConnectionPool.getPool();
+    constructor(dbName?: string) {
+        if (typeof dbName !== "undefined") {
+            this.connection = MySQLConnectionPool.getPool(dbName);
+        } else {
+            this.connection = MySQLConnectionPool.getPool(dbName);
+        }
+
+        this.userDAO = new UserDAO(this.connection);
+
     }
 
-    changeDBTo(dbName: string) {
-        this.connection = MySQLConnectionPool.getPool(dbName);
-    }
-
-    // Todo JWT 的簽名 應該獨立出來, 因為簽名的欄位 要放在一起管裡, 不能每次都來這裡查看
-    // 要有服務專門簽使用者 與 驗證使用者
+    // if not exist that user, return null
     async getUserJWT(email: string, password: string): Promise<string | null> {
 
         let isLogin = await this.checkUserPassword(email, password);
-        if (isLogin) {
-            let userDAO = new UserDAO(this.connection);
-            let user: User | null = await userDAO.findByEmail(email);
 
-            if (user) {
-                let id = user.id;
-                let nickname = user.nickname;
-                const token = jwt.sign({ id, email, nickname }, process.env.JWT_PRIVATE_KEY);
-                return token;
-            }
+        if (isLogin) {
+            let user: User = await this.userDAO.findByEmail(email) as User;
+
+            let jwt = JWTService.signUserJWT(user);
+            return jwt;
 
         }
         return null;
@@ -46,9 +42,7 @@ export default class UserService {
 
     async checkUserPassword(email: string, password: string): Promise<boolean> {
 
-
-        let userDAO = new UserDAO(this.connection);
-        let user: User | null = await userDAO.findByEmail(email);
+        let user: User | null = await this.userDAO.findByEmail(email);
 
         if (user) {
             let isUserLogin = await this.bcryptComparePassword(password, user.password);
@@ -58,36 +52,27 @@ export default class UserService {
 
     }
 
-
     async addNewUser(email: string, nickname: string, password: string, id?: number) {
-        let userDAO = new UserDAO(this.connection);
-
-
 
         let isUserExist = await this.checkUserEmailExist(email);
         if (isUserExist) {
-            throw Error("user is exist");
+            throw Error("User is exist");
         }
-
-
 
         let hashPassword = await this.bcryptPassword(password);
 
         if (typeof id === "undefined") {
             let user = new User(null, email, nickname, hashPassword);
-            await userDAO.create(user);
+            await this.userDAO.create(user);
         } else {
             let user = new User(id, email, nickname, hashPassword);
-            await userDAO.create(user);
+            await this.userDAO.create(user);
         }
-
-
     }
 
 
     bcryptPassword(password: string): Promise<string> {
-        const saltRounds = 10;
-        return bcrypt.hash(password, saltRounds);
+        return bcrypt.hash(password, UserService.PASSWORD_SALT_ROUNDS);
     }
 
     bcryptComparePassword(password: string, hash: string): Promise<boolean> {
@@ -96,8 +81,7 @@ export default class UserService {
 
     async checkUserEmailExist(email: string): Promise<boolean> {
 
-        let userDAO = new UserDAO(this.connection);
-        let user: User | null = await userDAO.findByEmail(email);
+        let user: User | null = await this.userDAO.findByEmail(email);
 
         if (user) {
             return true;
@@ -105,24 +89,4 @@ export default class UserService {
         return false;
 
     }
-
-
-
-    // async addProduct(name: string, create_user_id: number, price: number, describe: string, photos?: string[]) {
-    //     let product = new Product(null, name, create_user_id, price, describe, photos);
-    //     let productDAO = new ProductDAO(this.connection);
-    //     await productDAO.create(product);
-    // }
-
-
-
-    // async findAllProduct(): Promise<[]> {
-    //         let productDAO = new ProductDAO(this.connection);
-    //         let products: Product[]= await productDAO.findAll();
-
-    //         let products_json = JSON.parse(JSON.stringify(products));
-    //         return products_json;
-    // }
-
-
 }
