@@ -38,12 +38,12 @@ export default class BuyListDAO {
 
 
             if (products_id.length === 0) {
-                return resolve(null);
+                return resolve(null); 
             }
 
             let jResult = JSON.parse(JSON.stringify(rows));
 
-            for (const product of jResult as Product[]) {
+            for (const product of jResult as Product[]) { // TODO: 有重複問題 insert 時就要檢查了, 且改成傳回 id 就好 保持簡單
                 returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
             }
 
