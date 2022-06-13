@@ -18,10 +18,12 @@ export default class PurchaseListService {
 
         let products = await this.purchaseListDAO.findUserPurchase(user_id);
 
-        let products_json = JSON.parse(JSON.stringify(products));
+        let idArray = [];
+        for(let p of products) {
+            idArray.push(p.id);
+        }
 
-        return products_json;
-
+        return idArray;
     }
 
     async checkUserhasProduct(user_id: number, product_id: number): Promise<boolean> {

@@ -1,15 +1,11 @@
-
-
+import 'dotenv/config';
 import express, { Express, Request, Response, NextFunction } from 'express';
-
-import dotenv from 'dotenv';
-dotenv.config();
-
 import Routes from './routes';
 import { initAlltables, insertFakeData } from "./db/seed";
 import { ValidationError } from "express-validation";
-var cors = require('cors');
+let cors = require('cors');
 import path from "path";
+
 
 const app: Express = express();
 
@@ -27,7 +23,6 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   }
 
   console.error(err);
-
   return res.status(500).json(err)
 })
 

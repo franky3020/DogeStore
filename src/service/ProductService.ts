@@ -92,13 +92,8 @@ export default class ProductService {
     async deleteProductById(id: number): Promise<void> {
         await this.productDAO.deleteById(id);
 
-        this.deleteProductImg(id).catch(()=>{
-            // ignore
-        })
-
-        this.deleteProductZipFile(id).catch(()=>{
-            // ignore
-        })
+        this.deleteProductImg(id).catch(()=>{}); // ignore error
+        this.deleteProductZipFile(id).catch(()=>{}); // ignore error
     }
 
 

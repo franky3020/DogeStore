@@ -75,8 +75,8 @@ class PurchaseRouter {
         try {
 
             let user_id = req.authUserID;
-            let products_json = await this.purchaseListService.getUserPurchaseList(user_id);
-            return res.send(products_json);
+            let products_id_json = await this.purchaseListService.getUserPurchaseList(user_id);
+            return res.send(products_id_json);
 
         } catch (err) {
             return next(err);

@@ -86,7 +86,7 @@ test("Get user purchase list", async () => {
     let json_result = await purchaseListService.getUserPurchaseList(1);
     expect(json_result).toEqual(
         [
-            product_init_1, product_init_2
+            product_init_1.id, product_init_2.id
         ]
     );
 })
