@@ -7,6 +7,7 @@ import User from "../entity/User";
 import Product from "../entity/Product";
 import ProductDAO from "../repositories/ProductDAO";
 import MySQLConnectionPool from "../db/MySQLConnectionPool";
+import UserDAO from "../repositories/UserDAO";
 
 import UserService from "../service/UserService";
 
@@ -37,7 +38,9 @@ export async function insertFakeData(databaseName: string) {
     const user_init_2 = new User(2, "other@gmail.com", "other", "12345678");
 
     // 一定要先有user 因為外健限制
-    let userService = new UserService();
+
+    let userDAO = new UserDAO(connectPool);
+    let userService = new UserService(userDAO);
     await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
     await userService.addNewUser(user_init_2.email, user_init_2.nickname, user_init_2.password, user_init_2.id as number);
 
