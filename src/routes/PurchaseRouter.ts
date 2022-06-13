@@ -51,23 +51,18 @@ class PurchaseRouter {
 
         // Get
         this.router.route('/').get(authentication, this.getUserPurchaseList.bind(this));
-
         this.router.route('/productZipFile/:id').get(authentication, this.isUserhasProductMiddleware.bind(this), this.getProductZipFile.bind(this));
         
         // Post
         this.router.route('/').post(authentication, validate(this.purchaseValidation), this.addPurchasetList.bind(this));
         this.router.route('/productZipFile/:id').post(authentication, isAdminMiddleware ,this.uploadFile.single('uploaded_file'), this.uploadProductZipFile.bind(this));
-
-
     }
 
     async addPurchasetList(req: any, res: Response, next: NextFunction) {
         try {
 
-
             let user_id = req.authUserID;
             let product_id = req.body.product_id;
-
 
             await this.purchaseListService.addProductToPurchaseList(user_id, product_id);
             return res.status(201).end();
@@ -80,9 +75,9 @@ class PurchaseRouter {
         try {
 
             let user_id = req.authUserID;
-
             let products_json = await this.purchaseListService.getUserPurchaseList(user_id);
             return res.send(products_json);
+
         } catch (err) {
             return next(err);
         }
@@ -106,8 +101,6 @@ class PurchaseRouter {
     }
 
     async isUserhasProductMiddleware(req: any, res: Response, next: NextFunction) {
-
-
         try {
 
             let user_id = req.authUserID;
@@ -147,11 +140,10 @@ class PurchaseRouter {
                 throw Error("error in upload file");
             }
 
-
         
             await this.productService.addProductZipFile(product_id, req.file.buffer);
             return res.status(201).end();
-
+            
         } catch (err) {
             return next(err);
         }

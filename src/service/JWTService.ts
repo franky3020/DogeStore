@@ -1,9 +1,6 @@
-
-
 import User from "../entity/User";
 const jwt = require("jsonwebtoken");
 import 'dotenv/config';
-
 
 export default class JWTService {
 
