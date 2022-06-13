@@ -8,7 +8,7 @@ import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 import ProductDAO from "../../repositories/ProductDAO";
 import Product from "../../entity/Product";
 
-const testDatabaseName = "testDatabase_order";
+const testDatabaseName = "testDatabase_purchase";
 
 let userDAO: UserDAO;
 let purchaseListDAO: PurchaseListDAO;
@@ -72,7 +72,7 @@ test("When insert same user-product, will throw error", async () => {
     let now_date = new Date();
     now_date.setMilliseconds(0); // because DB can't store milliseconds
 
-    expect(
+    await expect(
         purchaseListDAO.insertProductToList(user_init.id as number, now_date, p1_init.id as number)
     ).rejects.toThrow();
 
