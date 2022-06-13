@@ -1,14 +1,11 @@
 
-
 import ProductDAO from "../repositories/ProductDAO";
 import Product from "../entity/Product";
-
 import fs from "fs";
 import path from "path";
 
 export default class ProductService {
 
-    // private connection: mysql.Pool;
     private productDAO: ProductDAO;
 
     static readonly SAVE_PRODUCT_IMAGES_PATH = path.join(__dirname, "/../../public/productImg");
@@ -30,9 +27,9 @@ export default class ProductService {
 
         let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
             
-        await fs.promises.mkdir(saveDir).catch((err)=>{
-            // do Nothing
-        }); // 故意忽略錯誤
+        await fs.promises.mkdir(saveDir).catch(()=>{
+            // ignore
+        });
 
 
         let filePath = path.join(saveDir, ProductService.PRODUCT_IMG_FILE_NAME);
@@ -40,14 +37,19 @@ export default class ProductService {
 
     }
 
+    deleteProductImg(product_id: number): Promise<any> {
+        let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
+        return fs.promises.rm(saveDir, {recursive: true});
+    }
+
     // Add in (SAVE_PRODUCT_ZIP_FILE_PATH /:id/product.zip)
     async addProductZipFile(product_id: number, zipFile: Buffer): Promise<void> {
 
         let saveDir = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString());
             
-        await fs.promises.mkdir(saveDir).catch((err)=>{
-            // do Nothing
-        }); // 故意忽略錯誤
+        await fs.promises.mkdir(saveDir).catch(()=>{
+            // ignore
+        });
 
         let fileName = ProductService.PRODUCT_ZIP_FILE_NAME;
         let filePath = path.join(saveDir, fileName);
@@ -60,13 +62,10 @@ export default class ProductService {
         let fileName = ProductService.PRODUCT_ZIP_FILE_NAME;
         let productZipFilePath = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString(), fileName);
         return productZipFilePath;
-
     }
 
-    deleteProductImg(product_id: number): Promise<any> {
-
-        let saveDir = path.join(ProductService.SAVE_PRODUCT_IMAGES_PATH, product_id.toString());
-
+    deleteProductZipFile(product_id: number): Promise<any> {
+        let saveDir = path.join(ProductService.SAVE_PRODUCT_ZIP_FILE_PATH, product_id.toString());
         return fs.promises.rm(saveDir, {recursive: true});
     }
 
@@ -75,7 +74,6 @@ export default class ProductService {
 
         let product: Product | null = await this.productDAO.findById(id);
 
-        
         let product_json = {};
         if (product) {
             product_json = JSON.parse(JSON.stringify(product));
@@ -93,7 +91,9 @@ export default class ProductService {
 
     async deleteProductById(id: number): Promise<void> {
         await this.productDAO.deleteById(id);
-        await this.deleteProductImg(id);
+
+        this.deleteProductImg(id).catch(()=>{}); // ignore error
+        this.deleteProductZipFile(id).catch(()=>{}); // ignore error
     }
 
 

@@ -16,17 +16,6 @@ const product_init_1 = {
     photos: []
 }
 
-
-
-beforeAll(async () => {
-
-
-});
-
-afterAll(async () => {
-
-});
-
 test("FindProductById", async () => {
     let mockProductDAO = {
         findById: jest.fn((id: number) => {
@@ -140,7 +129,8 @@ test("delete product", async () => {
 
     const productService = new ProductService(mockProductDAO as unknown as ProductDAO);
 
-    productService.deleteProductImg = jest.fn();
+    productService.deleteProductImg = jest.fn(()=>Promise.resolve());
+    productService.deleteProductZipFile = jest.fn(()=>Promise.resolve());
 
     await productService.deleteProductById(1);
 
@@ -149,6 +139,9 @@ test("delete product", async () => {
 
     let mockDeleteImgFn = productService.deleteProductImg as jest.Mock<any, any>;
     expect(mockDeleteImgFn.mock.lastCall.length).toBe(1);
+
+    let mockDeleteZipFileFn = productService.deleteProductZipFile as jest.Mock<any, any>;
+    expect(mockDeleteZipFileFn.mock.lastCall.length).toBe(1);
    
 
 

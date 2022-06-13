@@ -1,25 +1,12 @@
-
-
 import PurchaseListDAO from "../repositories/PurchaseListDAO";
-import mysql from "mysql2";
-import MySQLConnectionPool from "../db/MySQLConnectionPool";
 
 export default class PurchaseListService {
 
-    private connection: mysql.Pool;
     private purchaseListDAO: PurchaseListDAO;
 
-    constructor() {
-        this.connection = MySQLConnectionPool.getPool();
-        this.purchaseListDAO = new PurchaseListDAO(this.connection);
-
+    constructor(purchaseListDAO: PurchaseListDAO) {
+        this.purchaseListDAO = purchaseListDAO;
     }
-
-
-    changeDBTo(dbName: string) {
-        this.connection = MySQLConnectionPool.getPool(dbName);
-    }
-
 
     async addProductToPurchaseList(user_id: number, product_id: number) {
 
@@ -31,17 +18,19 @@ export default class PurchaseListService {
 
         let products = await this.purchaseListDAO.findUserPurchase(user_id);
 
-        let products_json = JSON.parse(JSON.stringify(products));
+        let idArray = [];
+        for(let p of products) {
+            idArray.push(p.id);
+        }
 
-        return products_json;
-
+        return idArray;
     }
 
     async checkUserhasProduct(user_id: number, product_id: number): Promise<boolean> {
 
         let products = await this.purchaseListDAO.findUserPurchase(user_id);
 
-        if (products === null || products.length === 0) {
+        if (products.length === 0) {
             return false;
         }
 
@@ -55,8 +44,4 @@ export default class PurchaseListService {
         return false;
 
     }
-
-
-
-
 }
