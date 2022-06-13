@@ -5,6 +5,7 @@ import { validate, Joi } from "express-validation";
 import { Request, Response, NextFunction } from 'express';
 
 import PurchaseListService from "../service/PurchaseListService";
+import PurchaseListDAO from "../repositories/PurchaseListDAO";
 
 import { authentication } from "../middleware/jwtAuth";
 import isAdminMiddleware from "../middleware/isAdmin";
@@ -18,7 +19,8 @@ class PurchaseRouter {
 
     router = Router();
 
-    private purchaseListService = new PurchaseListService();
+
+    private purchaseListService: PurchaseListService;
     private uploadFile: multer.Multer = multer();
 
 
@@ -34,8 +36,12 @@ class PurchaseRouter {
     constructor() {
         
         let connection = MySQLConnectionPool.getPool();
+        
         let productDAO = new ProductDAO(connection);
         this.productService = new ProductService(productDAO);
+
+        let purchaseListDAO = new PurchaseListDAO(connection);
+        this.purchaseListService = new PurchaseListService(purchaseListDAO);
 
 
         this.intializeRoutes();

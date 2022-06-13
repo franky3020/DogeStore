@@ -16,17 +16,6 @@ const product_init_1 = {
     photos: []
 }
 
-
-
-beforeAll(async () => {
-
-
-});
-
-afterAll(async () => {
-
-});
-
 test("FindProductById", async () => {
     let mockProductDAO = {
         findById: jest.fn((id: number) => {
