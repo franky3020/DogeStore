@@ -140,10 +140,18 @@ test("delete product", async () => {
 
     const productService = new ProductService(mockProductDAO as unknown as ProductDAO);
 
+    productService.deleteProductImg = jest.fn();
+
     await productService.deleteProductById(1);
 
     let mockFnCallTime = mockProductDAO.deleteById.mock.lastCall.length;
     expect(mockFnCallTime).toBe(1);
+
+    let mockDeleteImgFn = productService.deleteProductImg as jest.Mock<any, any>;
+    expect(mockDeleteImgFn.mock.lastCall.length).toBe(1);
+   
+
+
 
 });
 

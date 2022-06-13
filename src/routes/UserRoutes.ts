@@ -2,8 +2,11 @@
 import { Router } from 'express';
 
 import { validate, Joi } from "express-validation";
+import mysql from "mysql2";
 
 import { Request, Response, NextFunction } from 'express';
+import MySQLConnectionPool from "../db/MySQLConnectionPool";
+import UserDAO from "../repositories/UserDAO";
 
 import UserService from "../service/UserService";
 
@@ -39,12 +42,18 @@ class UserRoutes {
         }),
     };
 
+    private connection: mysql.Pool;
+    private userDAO: UserDAO;
+    
 
-
-
-    private userService: UserService = new UserService();
+    private userService: UserService;
 
     constructor() {
+
+        this.connection = MySQLConnectionPool.getPool();
+        this.userDAO = new UserDAO(this.connection);
+        this.userService = new UserService(this.userDAO);
+
         this.intializeRoutes();
     }
 

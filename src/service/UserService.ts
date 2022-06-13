@@ -1,27 +1,16 @@
-import mysql from "mysql2";
-import MySQLConnectionPool from "../db/MySQLConnectionPool";
 import UserDAO from "../repositories/UserDAO";
 import User from "../entity/User";
-
 import JWTService from "./JWTService";
 const bcrypt = require('bcrypt');
 
 export default class UserService {
 
-    private connection: mysql.Pool;
     private userDAO: UserDAO;
 
     static readonly PASSWORD_SALT_ROUNDS = 10;
 
-    constructor(dbName?: string) {
-        if (typeof dbName !== "undefined") {
-            this.connection = MySQLConnectionPool.getPool(dbName);
-        } else {
-            this.connection = MySQLConnectionPool.getPool(dbName);
-        }
-
-        this.userDAO = new UserDAO(this.connection);
-
+    constructor(userDAO: UserDAO) {
+        this.userDAO = userDAO;
     }
 
     // if not exist that user, return null
