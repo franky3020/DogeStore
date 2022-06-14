@@ -31,7 +31,7 @@ export default class MySQLConnectionPool {
                 port: process.env.DB_PORT as unknown as number,
                 database: databaseName,
                 waitForConnections: true,
-                connectionLimit: 15,
+                connectionLimit: 5,
                 queueLimit: 0,
                 timezone: "+00:00"
             });

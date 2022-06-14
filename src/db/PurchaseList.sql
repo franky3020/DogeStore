@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS `PurchaseList` (
     PRIMARY KEY (`id`),
     CONSTRAINT `user_product_unique` UNIQUE (`user_id`, `product_id`),
     CONSTRAINT `fk_PurchaseList_user_id` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`),
-    CONSTRAINT `fk_PurchaseList_product_id` FOREIGN KEY (`product_id`) REFERENCES `Products`(`id`)
+    CONSTRAINT `fk_PurchaseList_product_id` FOREIGN KEY (`product_id`) REFERENCES `Products`(`id`) ON DELETE CASCADE
 )
