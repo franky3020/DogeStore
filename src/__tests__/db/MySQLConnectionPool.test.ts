@@ -12,12 +12,6 @@ let connectionPool: mysql.Pool;
 beforeAll(async () => {
     await initAlltables(testDatabaseName);
     connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
-
-    let userDAO = new UserDAO(connectionPool);
-
-    const user_init = new User(1, "test", "test", "test");
-    await userDAO.create(user_init);
-
 });
 
 afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把它放在所有DAO測試之後
@@ -28,7 +22,7 @@ afterAll(async () => { // 直接刪除整個資料庫就好 Todo 這之後要把
 
 describe("MySQLConnectionPool", () => {
 
-    test("end not exist database name ", () => {
+    test.only("end not exist database name ", () => {
 
         expect(() => {
             MySQLConnectionPool.endPool("noExist");

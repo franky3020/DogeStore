@@ -5,7 +5,7 @@ import { initAlltables, insertFakeData } from "./db/seed";
 import { ValidationError } from "express-validation";
 let cors = require('cors');
 import path from "path";
-
+import MySQLConnectionPool from './db/MySQLConnectionPool';
 
 const app: Express = express();
 
@@ -38,15 +38,39 @@ let initFakeDB = async () => {
   await insertFakeData(process.env.DB_NAME as string);
 }
 
-initFakeDB().then(() => {
-  const port = process.env.SERVER_PORT;
-  app.listen(port, async () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-  });
-}).catch((err) => {
-  console.error("init DB fail");
-  console.error(err);
-})
+let initDB = async () => {
+  await initAlltables(process.env.DB_NAME as string);
+}
+
+if(process.env.NODE_ENV === "development") {
+  initFakeDB().then(() => {
+    const port = process.env.SERVER_PORT;
+    app.listen(port, async () => {
+      console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+    });
+  }).catch((err) => {
+    console.error("init DB fail");
+    console.error(err);
+  })
+} else if( process.env.NODE_ENV === "production" ) {
+  initDB().then(() => {
+    const port = process.env.SERVER_PORT;
+    app.listen(port, async () => {
+      console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+    });
+  }).catch((err) => {
+    console.error("init DB fail");
+    console.error(err);
+  })
+} else {
+  throw Error("you neet to choose development or production env");
+}
+
+
+
+process.on('SIGINT', function() {
+  MySQLConnectionPool.endAllPool();
+});
 
 
 

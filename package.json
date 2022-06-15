@@ -4,16 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node -r dotenv/config ./build/index.js",
-    "dev": "concurrently \"npm:watch\" \"npm:serve\"",
-    "serve": "node -r dotenv/config ./build/index.js",
-    "serve_nodemom": "nodemon -r dotenv/config ./build/index.js",
+    "serve": "NODE_ENV=production node ./build/index.js",
+    "serve_windows": "set NODE_ENV=production&&node ./build/index.js",
+    "start": "npm run build && npm run serve_windows",
     "build": "tsc && npm run copy-files",
     "watch": "tsc -w",
     "test_and_coverage": "jest --coverage --collectCoverageFrom='./src/**'",
     "test": "jest",
     "copy-files": "copyfiles -u 1 src/**/*.sql build/",
-    "init_db": "npm run build && node ./build/db/seed.js"
+    "init_db": "npm run build && node ./build/db/seed.js",
+    "serve_nodemom": "nodemon ./build/index.js",
+    "dev": "concurrently \"npm:watch\" \"npm:serve\""
   },
   "author": "",
   "license": "ISC",

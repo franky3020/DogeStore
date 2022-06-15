@@ -33,7 +33,8 @@ export default class MySQLConnectionPool {
                 waitForConnections: true,
                 connectionLimit: 5,
                 queueLimit: 0,
-                timezone: "+00:00"
+                timezone: "+00:00",
+                multipleStatements: true
             });
 
             MySQLConnectionPool.existDatabasePool[databaseName] = pool;
