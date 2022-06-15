@@ -42,7 +42,7 @@ let initDB = async () => {
   await initAlltables(process.env.DB_NAME as string);
 }
 
-if(process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
   initFakeDB().then(() => {
     const port = process.env.SERVER_PORT;
     app.listen(port, async () => {
@@ -52,7 +52,7 @@ if(process.env.NODE_ENV === "development") {
     console.error("init DB fail");
     console.error(err);
   })
-} else if( process.env.NODE_ENV === "production" ) {
+} else if (process.env.NODE_ENV === "production") {
   initDB().then(() => {
     const port = process.env.SERVER_PORT;
     app.listen(port, async () => {
@@ -68,7 +68,7 @@ if(process.env.NODE_ENV === "development") {
 
 
 
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
   MySQLConnectionPool.endAllPool();
 });
 
