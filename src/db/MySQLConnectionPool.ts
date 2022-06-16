@@ -1,34 +1,28 @@
 
 import mysql from "mysql2";
 import 'dotenv/config';
+import { getDBConfig } from "../config/config";
 
 export default class MySQLConnectionPool {
 
     private static existDatabasePool: { [key: string]: mysql.Pool } = {};
 
-    static getPool(databaseName?: string): mysql.Pool {
-
-        let dbName: string;
-
-        if (databaseName) {
-            dbName = databaseName;
-        } else {
-            dbName = process.env.DB_NAME as string;
-        }
-
-        MySQLConnectionPool.newPool(dbName);
-        return MySQLConnectionPool.existDatabasePool[dbName];
+    static getPool(databaseName: string): mysql.Pool {
+        MySQLConnectionPool.newPool(databaseName);
+        return MySQLConnectionPool.existDatabasePool[databaseName];
     }
 
     static newPool(databaseName: string) {
 
         if (typeof MySQLConnectionPool.existDatabasePool[databaseName] === "undefined") {
 
+            let dbConfig = getDBConfig();
+
             const pool = mysql.createPool({
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PWD,
-                port: process.env.DB_PORT as unknown as number,
+                host: dbConfig.host,
+                user: dbConfig.user,
+                password: dbConfig.password,
+                port: dbConfig.port,
                 database: databaseName,
                 waitForConnections: true,
                 connectionLimit: 5,

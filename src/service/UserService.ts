@@ -78,4 +78,15 @@ export default class UserService {
         return false;
 
     }
+
+    async checkUserExistById(id: number): Promise<boolean> {
+
+        let user: User | null = await this.userDAO.findById(id);
+
+        if (user) {
+            return true;
+        }
+        return false;
+
+    }
 }

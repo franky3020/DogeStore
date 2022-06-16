@@ -1,5 +1,5 @@
-
-import { createNewDatabase, deletesDatabase } from "./db";
+// TODO: 此檔案要改名
+import { createNewDatabase, deletesDatabase, isDatabaseExist } from "./db";
 import SeedDBFromSQLFile from "./SeedDBFromSQLfile";
 import path from "path";
 
@@ -11,26 +11,51 @@ import UserDAO from "../repositories/UserDAO";
 
 import UserService from "../service/UserService";
 
-export async function initAlltables(databaseName: string) {
+import { ADMIN_ID } from "../config/config";
+
+export async function resetDB(databaseName: string) {
 
     await deletesDatabase(databaseName);
     await createNewDatabase(databaseName);
 
-    let connectionPool = MySQLConnectionPool.getPool(databaseName);0
+    let connectionPool = MySQLConnectionPool.getPool(databaseName);
     let seedDBFromSQLFile = new SeedDBFromSQLFile(connectionPool);
 
     await seedDBFromSQLFile.createTable(path.join(__dirname, "init.sql"));
 
-    const user_init = new User(1, "test@gmail.com", "franky", "12345678");
-    let userDAO = new UserDAO(connectionPool);
-    let userService = new UserService(userDAO);
-    await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
+}
 
+export async function initDBIfNotExist(databaseName: string) {
+
+    if (await isDatabaseExist(databaseName) === true) {
+        return;
+    }
+
+    await createNewDatabase(databaseName);
+
+    let connectionPool = MySQLConnectionPool.getPool(databaseName);
+    let seedDBFromSQLFile = new SeedDBFromSQLFile(connectionPool);
+
+    await seedDBFromSQLFile.createTable(path.join(__dirname, "init.sql"));
 
 }
 
+export async function addAdminToDB(databaseName: string) {
+
+    let connectionPool = MySQLConnectionPool.getPool(databaseName);
+
+    const user_init = new User(1, "test@gmail.com", "franky", "12345678");
+    let userDAO = new UserDAO(connectionPool);
+    let userService = new UserService(userDAO);
+
+    if (await userService.checkUserExistById(ADMIN_ID) === false) {
+        await userService.addNewUser(user_init.email, user_init.nickname, user_init.password, user_init.id as number);
+    }
+}
+
+
 export async function insertFakeData(databaseName: string) {
-    
+
     let connectPool = MySQLConnectionPool.getPool(databaseName);
 
     const user_init_2 = new User(2, "other@gmail.com", "other", "12345678");
@@ -54,8 +79,11 @@ export async function insertFakeData(databaseName: string) {
     ]);
 }
 
+
+
+
 if (require.main === module) {
-    initAlltables("db_create_from_seed").then(() => {
+    resetDB("db_create_from_seed").then(() => {
         MySQLConnectionPool.endPool("db_create_from_seed");
     });
 }

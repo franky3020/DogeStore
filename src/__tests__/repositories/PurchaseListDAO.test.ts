@@ -3,7 +3,7 @@ import PurchaseListDAO from "../../repositories/PurchaseListDAO";
 import User from "../../entity/User";
 import UserDAO from "../../repositories/UserDAO";
 import { deletesDatabase } from "../../db/db";
-import { initAlltables } from "../../db/seed";
+import { resetDB } from "../../db/seed";
 import MySQLConnectionPool from "../../db/MySQLConnectionPool";
 import ProductDAO from "../../repositories/ProductDAO";
 import Product from "../../entity/Product";
@@ -15,7 +15,7 @@ let purchaseListDAO: PurchaseListDAO;
 let productDAO: ProductDAO;
 
 beforeAll(async () => {
-    await initAlltables(testDatabaseName);
+    await resetDB(testDatabaseName);
     let connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
 
     userDAO = new UserDAO(connectionPool);

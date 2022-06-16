@@ -1,3 +1,4 @@
+import 'dotenv/config';
 
 import { Router } from 'express';
 
@@ -50,7 +51,7 @@ class UserRoutes {
 
     constructor() {
 
-        this.connection = MySQLConnectionPool.getPool();
+        this.connection = MySQLConnectionPool.getPool(process.env.DB_NAME as string);
         this.userDAO = new UserDAO(this.connection);
         this.userService = new UserService(this.userDAO);
 

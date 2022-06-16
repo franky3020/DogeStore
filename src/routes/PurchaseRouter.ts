@@ -1,3 +1,4 @@
+import 'dotenv/config';
 
 import { Router } from 'express';
 
@@ -35,7 +36,7 @@ class PurchaseRouter {
 
     constructor() {
         
-        let connection = MySQLConnectionPool.getPool();
+        let connection = MySQLConnectionPool.getPool(process.env.DB_NAME as string);
         
         let productDAO = new ProductDAO(connection);
         this.productService = new ProductService(productDAO);

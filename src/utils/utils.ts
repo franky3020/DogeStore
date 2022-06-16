@@ -1,8 +1,8 @@
 
 
-const ADMIN_ID = 1;
+import { ADMIN_ID } from "../config/config";
 
-// 需搭配jwtAuth
+
 export function isAdmin(user_id: number): boolean {
 
     if (user_id === ADMIN_ID) {

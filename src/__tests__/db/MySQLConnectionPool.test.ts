@@ -1,16 +1,14 @@
 import mysql from "mysql2";
 import MySQLConnectionPool from "../../db/MySQLConnectionPool";
-import { initAlltables } from "../../db/seed";
+import { resetDB } from "../../db/seed";
 import { deletesDatabase } from "../../db/db";
-import UserDAO from "../../repositories/UserDAO";
-import User from "../../entity/User";
 
 
 let testDatabaseName = "test_MySQLConnectionPool";
 let connectionPool: mysql.Pool;
 
 beforeAll(async () => {
-    await initAlltables(testDatabaseName);
+    await resetDB(testDatabaseName);
     connectionPool = MySQLConnectionPool.getPool(testDatabaseName);
 });
 

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import Routes from './routes';
-import { initAlltables, insertFakeData } from "./db/seed";
+import { resetDB, insertFakeData, initDBIfNotExist, addAdminToDB } from "./db/seed";
 import { ValidationError } from "express-validation";
 let cors = require('cors');
 import path from "path";
@@ -18,58 +18,68 @@ new Routes(app);
 
 // 有4個參數的方法 一定是用來做錯誤處理的 一定要放在後面
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
-  if (err instanceof ValidationError) {
-    return res.status(err.statusCode).json(err)
-  }
+	if (err instanceof ValidationError) {
+		return res.status(err.statusCode).json(err)
+	}
 
-  console.error(err);
-  return res.status(500).json(err)
+	console.error(err);
+	return res.status(500).json(err)
 })
 
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function (req, res) {
-  res.status(404).send('nothing');
+	res.status(404).send('nothing');
 });
 
+const dbName = process.env.DB_NAME as string;
 
-let initFakeDB = async () => {
-  await initAlltables(process.env.DB_NAME as string);
-  await insertFakeData(process.env.DB_NAME as string);
+let createFakeDB = async () => {
+	await resetDB(dbName);
+	await addAdminToDB(dbName);
+	await insertFakeData(dbName);
 }
 
 let initDB = async () => {
-  await initAlltables(process.env.DB_NAME as string);
+	await initDBIfNotExist(dbName);
+	await addAdminToDB(dbName);
 }
+
 
 if (process.env.NODE_ENV === "development") {
-  initFakeDB().then(() => {
-    const port = process.env.SERVER_PORT;
-    app.listen(port, async () => {
-      console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-    });
-  }).catch((err) => {
-    console.error("init DB fail");
-    console.error(err);
-  })
-} else if (process.env.NODE_ENV === "production") {
-  initDB().then(() => {
-    const port = process.env.SERVER_PORT;
-    app.listen(port, async () => {
-      console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-    });
-  }).catch((err) => {
-    console.error("init DB fail");
-    console.error(err);
-  })
-} else {
-  throw Error("you neet to choose development or production env");
-}
 
+	createFakeDB().then(() => {
+		const port = process.env.TEST_SERVER_PORT;
+		app.listen(port, async () => {
+			console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+		});
+
+	}).catch((err) => {
+		console.error(" createFakeDB fail ");
+		console.error(err);
+	});
+
+} else if (process.env.NODE_ENV === "production") {
+
+	initDB().then(() => {
+		const port = process.env.SERVER_PORT;
+		app.listen(port, async () => {
+			console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+		});
+
+	}).catch((err) => {
+		console.error(" init DB fail ");
+		console.error(err);
+	});
+
+} else {
+	throw Error("you neet to choose development or production env");
+}
 
 
 process.on('SIGINT', function () {
-  MySQLConnectionPool.endAllPool();
+	MySQLConnectionPool.endAllPool();
+	process.exit();
 });
 
 

@@ -6,7 +6,9 @@
   "scripts": {
     "serve": "NODE_ENV=production node ./build/index.js",
     "serve_windows": "set NODE_ENV=production&&node ./build/index.js",
+    "serve_windows_dev": "set NODE_ENV=development&&node ./build/index.js",
     "start": "npm run build && npm run serve_windows",
+    "start_dev": "npm run build && npm run serve_windows_dev",
     "build": "tsc && npm run copy-files",
     "watch": "tsc -w",
     "test_and_coverage": "jest --coverage --collectCoverageFrom='./src/**'",
