@@ -2,6 +2,8 @@ node_modules/
 .env
 build/
 
+coverage/*
+!coverage/*.svg
 
 public/productImg/*
 !public/productImg/.gitkeep
