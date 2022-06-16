@@ -1,7 +1,4 @@
-
-
 import { ADMIN_ID } from "../config/config";
-
 
 export function isAdmin(user_id: number): boolean {
 
@@ -11,4 +8,3 @@ export function isAdmin(user_id: number): boolean {
         return false;
     }
 };
-

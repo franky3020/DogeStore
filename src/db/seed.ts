@@ -1,4 +1,5 @@
-// TODO: 此檔案要改名
+import 'dotenv/config';
+
 import { createNewDatabase, deletesDatabase, isDatabaseExist } from "./db";
 import SeedDBFromSQLFile from "./SeedDBFromSQLfile";
 import path from "path";
@@ -44,7 +45,11 @@ export async function addAdminToDB(databaseName: string) {
 
     let connectionPool = MySQLConnectionPool.getPool(databaseName);
 
-    const user_init = new User(1, "test@gmail.com", "franky", "12345678");
+    let admin_email = process.env.ADMIN_EMAIL as string;
+    let admin_password = process.env.ADMIN_PASSWORD as string;
+
+    const user_init = new User(1, admin_email , "admin", admin_password);
+
     let userDAO = new UserDAO(connectionPool);
     let userService = new UserService(userDAO);
 

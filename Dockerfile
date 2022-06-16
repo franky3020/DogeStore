@@ -1,13 +1,17 @@
 FROM node:lts-alpine3.16
 
 WORKDIR /usr/src/app
+
+# For put product files
+RUN mkdir product_zip && mkdir -p public/productImg
+
+# For npm run build
 RUN mkdir build
 
 COPY package*.json ./
-
 RUN npm ci 
-
 RUN npm install -g typescript
+
 RUN npm install pm2 -g
 
 COPY . .
