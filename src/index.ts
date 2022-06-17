@@ -11,7 +11,7 @@ const app: Express = express();
 
 app.disable('x-powered-by'); // 官網寫 可防止駭客用來探測有沒有用express 架的網站
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 app.use('/public', express.static(path.join(__dirname, '../public')));
 new Routes(app);
