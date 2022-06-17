@@ -57,6 +57,8 @@ if (process.env.NODE_ENV === "development") {
 	}).catch((err) => {
 		console.error(" createFakeDB fail ");
 		console.error(err);
+
+		process.exit();
 	});
 
 } else if (process.env.NODE_ENV === "production") {
@@ -70,6 +72,8 @@ if (process.env.NODE_ENV === "development") {
 	}).catch((err) => {
 		console.error(" init DB fail ");
 		console.error(err);
+		
+		process.exit();
 	});
 
 } else {
