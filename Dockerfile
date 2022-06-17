@@ -21,5 +21,4 @@ RUN npm run build
 # EXPOSE just declaration, still use -p to setting
 EXPOSE 5000
 
-# "--parallel", "1" can make run init DB will not fail
-CMD [ "pm2-runtime", "start", "pm2.config.js", "--env", "production", "--parallel", "1" , "--wait-ready", "--listen-timeout", "5000"];
+CMD ["pm2-runtime", "start", "pm2.config.js", "--env", "production"];
