@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ./
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    volumes:
+      - ./product_zip:/usr/src/app/product_zip/
+      - ./public/productImg:/usr/src/app/public/productImg/
+  
+
+   
+  mysql:
+    image: mysql:8.0.29-oracle
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - ${DB_PORT}:3306
+    environment: 
+      MYSQL_ROOT_PASSWORD: ${DB_PWD}
+
+volumes:
+  mysql-data: {}
