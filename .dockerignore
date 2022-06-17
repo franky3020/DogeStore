@@ -4,3 +4,5 @@ coverage
 doc
 product_zip
 public
+.dockerignore
+Dockerfile
