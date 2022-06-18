@@ -17,7 +17,7 @@ Website: https://stroe.dogecoin.idv.tw/
 
 ### 使用者操作
 * 註冊 > 查看模型 > 購買模型 >  下載模型 > 查看已購買模型 > 登出
-![](doc\readmeGIF\buy-download_2.gif)
+![](doc/readmeGIF/buy-download_2.gif)
 
 ### 管理者操作
 * ˋ上傳新模型 > 上傳模型圖片 > 上傳模型zip檔 > 測試下載 > 刪除模型
