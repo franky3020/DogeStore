@@ -5,7 +5,7 @@ services:
     build:
       context: ./
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
+      - ${DOCKER_COMPOSE_SERVER_PORT}:5000
     restart: always
     depends_on:
       - mysql

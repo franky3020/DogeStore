@@ -45,11 +45,10 @@ let initDB = async () => {
 	await addAdminToDB(dbName);
 }
 
-
+const port = 5000;
 if (process.env.NODE_ENV === "development") {
 
 	createFakeDB().then(() => {
-		const port = process.env.TEST_SERVER_PORT;
 		app.listen(port, async () => {
 			console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 		});
@@ -64,7 +63,6 @@ if (process.env.NODE_ENV === "development") {
 } else if (process.env.NODE_ENV === "production") {
 
 	initDB().then(() => {
-		const port = process.env.SERVER_PORT;
 		app.listen(port, async () => {
 			console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 		});
