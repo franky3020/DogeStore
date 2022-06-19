@@ -24,14 +24,6 @@ class PurchaseRouter {
     private purchaseListService: PurchaseListService;
     private uploadFile: multer.Multer = multer();
 
-
-    private purchaseValidation = {
-        body: Joi.object({
-            product_id: Joi.number()
-                .required()
-        }),
-    };
-
     private productService: ProductService;
 
     constructor() {
@@ -58,6 +50,13 @@ class PurchaseRouter {
         this.router.route('/').post(authentication, validate(this.purchaseValidation), this.addPurchasetList.bind(this));
         this.router.route('/productZipFile/:id').post(authentication, isAdminMiddleware ,this.uploadFile.single('uploaded_file'), this.uploadProductZipFile.bind(this));
     }
+
+    private purchaseValidation = {
+        body: Joi.object({
+            product_id: Joi.number()
+                .required()
+        }),
+    };
 
     async addPurchasetList(req: any, res: Response, next: NextFunction) {
         try {

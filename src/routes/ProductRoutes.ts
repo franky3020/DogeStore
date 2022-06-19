@@ -18,21 +18,6 @@ class ProductRoutes {
 
     router = Router();
 
-    private productValidation = {
-        body: Joi.object({
-            name: Joi.string()
-                .max(50)
-                .required(),
-            create_user_id: Joi.number()
-                .required(),
-            price: Joi.number()
-                .required(),
-            describe: Joi.string()
-                .max(1000)
-                .required()
-        }),
-    };
-
     private uploadFile: multer.Multer = multer();
     private productService: ProductService;
 
@@ -58,6 +43,21 @@ class ProductRoutes {
         // Delete
         this.router.route('/:id').delete(authentication, isAdminMiddleware, this.deleteProductById.bind(this));
     }
+
+    private productValidation = {
+        body: Joi.object({
+            name: Joi.string()
+                .max(50)
+                .required(),
+            create_user_id: Joi.number()
+                .required(),
+            price: Joi.number()
+                .required(),
+            describe: Joi.string()
+                .max(1000)
+                .required()
+        }),
+    };
 
 
     async addNewProduct(req: any, res: Response, next: NextFunction) {

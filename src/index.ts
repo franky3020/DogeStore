@@ -78,7 +78,6 @@ if (process.env.NODE_ENV === "development") {
 	throw Error("you neet to choose development or production env");
 }
 
-
 process.on('SIGINT', function () {
 	MySQLConnectionPool.endAllPool();
 	process.exit();

@@ -15,6 +15,26 @@ class UserRoutes {
 
     router = Router();
 
+    private connection: mysql.Pool;
+    private userDAO: UserDAO;
+
+    private userService: UserService;
+
+    constructor() {
+
+        this.connection = MySQLConnectionPool.getPool(process.env.DB_NAME as string);
+        this.userDAO = new UserDAO(this.connection);
+        this.userService = new UserService(this.userDAO);
+
+        this.intializeRoutes();
+    }
+
+    intializeRoutes() {
+        // 需要使用 bind 在 呼叫同類別的方法
+        this.router.route('/login').post(validate(this.userLoginValidation), this.getUserJWT.bind(this));
+        this.router.route('/register').post(validate(this.userRegisterValidation), this.userRegister.bind(this));
+    }
+
     private userLoginValidation = {
         body: Joi.object({
             email: Joi.string()
@@ -42,27 +62,6 @@ class UserRoutes {
                 .required()
         }),
     };
-
-    private connection: mysql.Pool;
-    private userDAO: UserDAO;
-    
-
-    private userService: UserService;
-
-    constructor() {
-
-        this.connection = MySQLConnectionPool.getPool(process.env.DB_NAME as string);
-        this.userDAO = new UserDAO(this.connection);
-        this.userService = new UserService(this.userDAO);
-
-        this.intializeRoutes();
-    }
-
-    intializeRoutes() {
-        // 需要使用 bind 在 呼叫同類別的方法
-        this.router.route('/login').post(validate(this.userLoginValidation), this.getUserJWT.bind(this));
-        this.router.route('/register').post(validate(this.userRegisterValidation), this.userRegister.bind(this));
-    }
 
 
     async getUserJWT(req: Request, res: Response, next: NextFunction) {

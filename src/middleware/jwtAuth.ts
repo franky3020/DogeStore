@@ -1,4 +1,3 @@
-var jwt = require('jsonwebtoken');
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from "./AuthRequest";
 import 'dotenv/config';

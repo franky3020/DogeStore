@@ -3,7 +3,7 @@ import mysql from "mysql2";
 import Product from "../entity/Product";
 
 
-export default class BuyListDAO {
+export default class PurchaseListDAO {
 
     private connection: mysql.Pool;
 
