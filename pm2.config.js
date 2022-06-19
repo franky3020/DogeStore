@@ -8,6 +8,9 @@ module.exports = {
     },
     env_development: {
       NODE_ENV: "development"
-    }
+    },
+    wait_ready: true,
+    listen_timeout: 5000,
+    restart_delay: 5000
   }]
 }
