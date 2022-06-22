@@ -5,6 +5,9 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: "/__tests__/.*\.test\.ts$",
   coverageReporters: [
-    "json-summary"
+    "json-summary",
+    "json",
+    "lcov",
+    "text"
   ]
 };
