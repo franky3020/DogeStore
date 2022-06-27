@@ -1,7 +1,6 @@
 
 import User from "../../entity/User";
 import UserService from "../../service/UserService";
-import UserDAO from "../../repositories/UserDAO";
 
 import JWTService from "../../service/JWTService";
 jest.mock("../../service/JWTService");

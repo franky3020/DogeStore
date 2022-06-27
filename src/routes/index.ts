@@ -5,9 +5,17 @@ import UserRoutes from './UserRoutes';
 import PurchaseRouter from './PurchaseRouter';
 
 export default class Routes {
-	constructor(app: Application) {
+	// constructor(app: Application) {
+	// 	app.use('/api/product', ProductRoutes);
+	// 	app.use('/api/user', UserRoutes);
+	// 	app.use('/api/purchase', PurchaseRouter);
+	// }
+
+	static init(app: Application) {
 		app.use('/api/product', ProductRoutes);
 		app.use('/api/user', UserRoutes);
 		app.use('/api/purchase', PurchaseRouter);
 	}
+
+
 }

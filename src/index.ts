@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/public', express.static(path.join(__dirname, '../public')));
-new Routes(app);
+Routes.init(app);
 
 // 有4個參數的方法 一定是用來做錯誤處理的 一定要放在後面
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {

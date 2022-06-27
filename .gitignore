@@ -11,3 +11,4 @@ public/productImg/*
 product_zip/*
 !product_zip/.gitkeep
 
+.scannerwork/
