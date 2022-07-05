@@ -32,3 +32,10 @@ Website: https://stroe.dogecoin.idv.tw/
 5. 使用 Docker + PM2 部屬 server
 
 
+## 即將更新的功能
+前端將會顯示 3D 模型, 使用 [Three.js](https://threejs.org/) 的3D引擎實作
+
+[Demo](http://dogecoin.idv.tw:50020/)
+
+![](doc/readmeGIF/will_update_3dView.gif)
+
