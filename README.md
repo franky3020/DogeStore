@@ -1,6 +1,6 @@
 # Doge Store
 
-Website: https://stroe.dogecoin.idv.tw/
+Website: 遷移網頁中
 
 ## Test coverage
 ![badge-branches](./coverage/badge-branches.svg)

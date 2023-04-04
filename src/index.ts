@@ -49,8 +49,8 @@ const port = 5000;
 if (process.env.NODE_ENV === "development") {
 
 	createFakeDB().then(() => {
-		app.listen(port, async () => {
-			console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+		app.listen(port, () => {
+			console.log(`⚡️[server]: development Server is running at http://localhost:${port}`);
 		});
 
 	}).catch((err) => {
@@ -63,8 +63,8 @@ if (process.env.NODE_ENV === "development") {
 } else if (process.env.NODE_ENV === "production") {
 
 	initDB().then(() => {
-		app.listen(port, async () => {
-			console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+		app.listen(port, () => {
+			console.log(`⚡️[server]: production Server is running at https://localhost:${port}`);
 		});
 
 	}).catch((err) => {
@@ -75,7 +75,7 @@ if (process.env.NODE_ENV === "development") {
 	});
 
 } else {
-	throw Error("you neet to choose development or production env");
+	throw Error("you need to choose development or production env");
 }
 
 process.on('SIGINT', function () {
