@@ -1,6 +1,6 @@
 # Doge Store
 
-Website: 遷移網頁中
+Website: http://frankyya.com:35003/
 
 ## Test coverage
 ![badge-branches](./coverage/badge-branches.svg)
