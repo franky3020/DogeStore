@@ -10,8 +10,6 @@ export default class JWTService {
         let email = user.email;
         let nickname = user.nickname;
 
-        console.log("process.env.JWT_PRIVATE_KEY: ", jwtKey);
-
         const token = jwt.sign({ id, email, nickname }, jwtKey);
         return token;
     }

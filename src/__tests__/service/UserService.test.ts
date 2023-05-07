@@ -96,8 +96,34 @@ test("Not get user JWT", async () => {
 test("Add new user when email is exist", async () => {
 
     const userService = new UserService(null as any);
+    userService.checkUserEmailExist = jest.fn().mockReturnValue(true);
+
+    try {
+        await userService.addNewUser(user_init_1.email,user_init_1.nickname, user_init_1.password);
+    } catch (e) {
+        expect(e).toEqual(new Error('User is exist'));
+    }
+
+});
+
+test("Add new user when email is not exist", async () => {
+
+    const mockUserDAO = {
+        create: jest.fn()
+    };
+
+    const userService = new UserService(mockUserDAO as any);
     userService.checkUserEmailExist = jest.fn().mockReturnValue(false);
-    await expect(userService.addNewUser(user_init_1.email,user_init_1.nickname, user_init_1.password)).rejects.toThrowError();
+
+    await userService.addNewUser(user_init_1.email,user_init_1.nickname, user_init_1.password);
+
+    expect(mockUserDAO.create).toBeCalledTimes(1);
+
+    await userService.addNewUser(user_init_1.email,user_init_1.nickname, user_init_1.password, 2);
+
+    expect(mockUserDAO.create).toBeCalledTimes(2);
+
+
 });
 
 
@@ -134,6 +160,31 @@ test("Check user email exist", async () => {
     isUserExist = await userService.checkUserEmailExist(user_init_1.email);
     expect(isUserExist).toBe(false);
 
+});
+
+it('checkUserExistById', async () => {
+
+    let mockUserDAO = {
+        findById: jest.fn()
+    };
+
+    mockUserDAO.findById.mockReturnValue(
+        new User(user_init_1.id, user_init_1.email, user_init_1.nickname, user_init_1.password)
+    )
+
+    const userService = new UserService(mockUserDAO as any);
+
+    let isUserExist = await userService.checkUserExistById(user_init_1.id);
+
+    expect(isUserExist).toBe(true);
+
+    mockUserDAO.findById.mockReturnValue(
+        null
+    );
+
+    isUserExist = await userService.checkUserExistById(user_init_1.id);
+
+    expect(isUserExist).toBe(false);
 
 
 });
