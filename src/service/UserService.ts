@@ -1,6 +1,7 @@
 import UserDAO from "../repositories/UserDAO";
 import User from "../entity/User";
 import JWTService from "./JWTService";
+import 'dotenv/config';
 const bcrypt = require('bcrypt');
 
 export default class UserService {
@@ -21,7 +22,7 @@ export default class UserService {
         if (isLogin) {
             let user: User = await this.userDAO.findByEmail(email) as User;
 
-            let jwt = JWTService.signUserJWT(user);
+            let jwt = JWTService.signUserJWT(user, process.env.JWT_PRIVATE_KEY as string);
             return jwt;
 
         }

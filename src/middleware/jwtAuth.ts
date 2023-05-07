@@ -17,7 +17,7 @@ export async function authentication(req: AuthRequest, res: Response, next: Next
     }
    
 
-    let user_id = await JWTService.decodedUserJWT2UserId(token);
+    let user_id = await JWTService.decodedUserJWT2UserId(token, process.env.JWT_PRIVATE_KEY as string);
     if(user_id === null) {
         return res.status(401).json({ message: 'Unauthorized!' });
     } else {

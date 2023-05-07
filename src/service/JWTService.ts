@@ -4,21 +4,23 @@ import 'dotenv/config';
 
 export default class JWTService {
 
-    static signUserJWT(user: User) {
+    static signUserJWT(user: User, jwtKey: string) {
 
         let id = user.id;
         let email = user.email;
         let nickname = user.nickname;
 
-        const token = jwt.sign({ id, email, nickname }, process.env.JWT_PRIVATE_KEY);
+        console.log("process.env.JWT_PRIVATE_KEY: ", jwtKey);
+
+        const token = jwt.sign({ id, email, nickname }, jwtKey);
         return token;
     }
 
-    static decodedUserJWT2UserId(token: string): Promise<number | null> { // if verification failed return null 
+    static decodedUserJWT2UserId(token: string, jwtKey: string): Promise<number | null> { // if verification failed return null 
 
         return new Promise((resolve) => {
 
-            jwt.verify(token, process.env.JWT_PRIVATE_KEY, function (err: any, decoded: any) {
+            jwt.verify(token, jwtKey, function (err: any, decoded: any) {
 
                 if (err) {
                     return resolve(null);
