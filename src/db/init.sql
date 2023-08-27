@@ -14,7 +14,18 @@ CREATE TABLE IF NOT EXISTS `Products` (
     `price` INT,
     `describe` TEXT,
     PRIMARY KEY (`id`),
-    CONSTRAINT `fk_user_id` FOREIGN KEY (`create_user_id`) REFERENCES User(`id`)
+    CONSTRAINT `fk_user_id` FOREIGN KEY (`create_user_id`) REFERENCES `User`(`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `User_Favorite_Products` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `product_id` INT NOT NULL,
+    `is_favorite` BOOLEAN NOT NULL,
+    `update_time` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_favorite_user_id` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`),
+    CONSTRAINT `fk_favorite_product_id` FOREIGN KEY (`product_id`) REFERENCES `Products`(`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `PurchaseList` (

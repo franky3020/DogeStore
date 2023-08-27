@@ -1,6 +1,7 @@
 
 import Product from "../entity/Product";
 import mysql from "mysql2";
+import { GetProductDBRes } from "../entity/GetProductDBRes";
 
 
 export default class ProductDAO {
@@ -63,7 +64,21 @@ export default class ProductDAO {
 
     findAll(): Promise< Product[] > { 
 
-        let sql = "SELECT * FROM `Products`";
+        let sql = " \
+        SELECT \
+            `Products`.`id`, \
+            `Products`.`name`, \
+            `Products`.`create_user_id`, \
+            `User`.`nickname`, \
+            `Products`.`price`, \
+            `Products`.`describe` \
+        FROM \
+            `Products` \
+            JOIN \
+            `User` \
+            ON `Products`.`create_user_id` = `User`.`id`";
+
+
         let connection = this.connection;
         let returnProducts: Product[] = [];
 
@@ -77,8 +92,18 @@ export default class ProductDAO {
             }
 
             let jResult= JSON.parse(JSON.stringify(rows));
-            for(const product of jResult as Product[]) {
-                returnProducts.push(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
+            
+            for (const getProductRes of jResult as GetProductDBRes[]) {
+
+                let a_product = new Product(getProductRes.id,
+                                            getProductRes.name,
+                                            getProductRes.create_user_id,
+                                            getProductRes.price,
+                                            getProductRes.describe, []);
+                
+                a_product.setCreateUserName(getProductRes.nickname);
+                returnProducts.push(a_product);
+
             }
             return resolve(returnProducts);
         });

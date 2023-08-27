@@ -3,6 +3,7 @@ class Product {
     id: number | null; // Todo: 要檢查這利用 null 好不好
     name: string;
     create_user_id: number;
+    create_user_name = '';
     price: number;
     describe: string;
     photos: string[];// 描述產品本身的照片, 展示的縮圖 未來可加
@@ -22,6 +23,10 @@ class Product {
             this.photos = new Array(); // Lazy initialization
         }
 
+    }
+
+    setCreateUserName(username: string): void {
+        this.create_user_name = username;
     }
 
     toString(): string {

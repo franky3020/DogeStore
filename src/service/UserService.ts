@@ -90,4 +90,13 @@ export default class UserService {
         return false;
 
     }
+
+    async getUserNameById(id: number): Promise<string|null> {
+        let user: User | null = await this.userDAO.findById(id);
+
+        if (user) {
+            return user.nickname;
+        }
+        return null;
+    }
 }

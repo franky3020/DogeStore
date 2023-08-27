@@ -33,6 +33,7 @@ class UserRoutes {
         // 需要使用 bind 在 呼叫同類別的方法
         this.router.route('/login').post(validate(this.userLoginValidation), this.getUserJWT.bind(this));
         this.router.route('/register').post(validate(this.userRegisterValidation), this.userRegister.bind(this));
+        this.router.route('/register').post(this.userName.bind(this));
     }
 
     private userLoginValidation = {
@@ -97,6 +98,26 @@ class UserRoutes {
             await this.userService.addNewUser(email, nickname, password);
 
             return res.status(201).end();
+
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async userName(req: Request, res: Response, next: NextFunction) {
+        try {
+            let userId: number = Number(req.params.id);
+            let userName = await this.userService.getUserNameById(userId);
+
+            if (userName === null) {
+                return res.status(404).end();
+            }
+
+            let get_user_id_json = {
+                "userName": userName
+            }
+
+            return res.send(get_user_id_json);
 
         } catch (err) {
             next(err);
