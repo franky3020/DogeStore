@@ -1,102 +1,101 @@
 import UserDAO from "../repositories/UserDAO";
 import User from "../entity/User";
 import JWTService from "./JWTService";
-import 'dotenv/config';
-const bcrypt = require('bcrypt');
+import "dotenv/config";
+const bcrypt = require("bcrypt");
 
 export default class UserService {
+  private userDAO: UserDAO;
 
-    private userDAO: UserDAO;
+  static readonly PASSWORD_SALT_ROUNDS = 10;
 
-    static readonly PASSWORD_SALT_ROUNDS = 10;
+  constructor(userDAO: UserDAO) {
+    this.userDAO = userDAO;
+  }
 
-    constructor(userDAO: UserDAO) {
-        this.userDAO = userDAO;
+  // if not exist that user, return null
+  async getUserJWT(email: string, password: string): Promise<string | null> {
+    let isLogin = await this.checkUserPassword(email, password);
+
+    if (isLogin) {
+      let user: User = (await this.userDAO.findByEmail(email)) as User;
+
+      let jwt = JWTService.signUserJWT(
+        user,
+        process.env.JWT_PRIVATE_KEY as string,
+      );
+      return jwt;
+    }
+    return null;
+  }
+
+  async checkUserPassword(email: string, password: string): Promise<boolean> {
+    let user: User | null = await this.userDAO.findByEmail(email);
+
+    if (user) {
+      let isUserLogin = await this.bcryptComparePassword(
+        password,
+        user.password,
+      );
+      return isUserLogin;
+    }
+    return false;
+  }
+
+  async addNewUser(
+    email: string,
+    nickname: string,
+    password: string,
+    id?: number,
+  ) {
+    let isUserExist = await this.checkUserEmailExist(email);
+    if (isUserExist) {
+      throw Error("User is exist");
     }
 
-    // if not exist that user, return null
-    async getUserJWT(email: string, password: string): Promise<string | null> {
+    let hashPassword = await this.bcryptPassword(password);
 
-        let isLogin = await this.checkUserPassword(email, password);
-
-        if (isLogin) {
-            let user: User = await this.userDAO.findByEmail(email) as User;
-
-            let jwt = JWTService.signUserJWT(user, process.env.JWT_PRIVATE_KEY as string);
-            return jwt;
-
-        }
-        return null;
-
+    if (typeof id === "undefined") {
+      let user = new User(null, email, nickname, hashPassword);
+      await this.userDAO.create(user);
+    } else {
+      let user = new User(id, email, nickname, hashPassword);
+      await this.userDAO.create(user);
     }
+  }
 
-    async checkUserPassword(email: string, password: string): Promise<boolean> {
+  bcryptPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, UserService.PASSWORD_SALT_ROUNDS);
+  }
 
-        let user: User | null = await this.userDAO.findByEmail(email);
+  bcryptComparePassword(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash);
+  }
 
-        if (user) {
-            let isUserLogin = await this.bcryptComparePassword(password, user.password);
-            return isUserLogin;
-        }
-        return false;
+  async checkUserEmailExist(email: string): Promise<boolean> {
+    let user: User | null = await this.userDAO.findByEmail(email);
 
+    if (user) {
+      return true;
     }
+    return false;
+  }
 
-    async addNewUser(email: string, nickname: string, password: string, id?: number) {
+  async checkUserExistById(id: number): Promise<boolean> {
+    let user: User | null = await this.userDAO.findById(id);
 
-        let isUserExist = await this.checkUserEmailExist(email);
-        if (isUserExist) {
-            throw Error("User is exist");
-        }
-
-        let hashPassword = await this.bcryptPassword(password);
-
-        if (typeof id === "undefined") {
-            let user = new User(null, email, nickname, hashPassword);
-            await this.userDAO.create(user);
-        } else {
-            let user = new User(id, email, nickname, hashPassword);
-            await this.userDAO.create(user);
-        }
+    if (user) {
+      return true;
     }
+    return false;
+  }
 
+  async getUserNameById(id: number): Promise<string | null> {
+    let user: User | null = await this.userDAO.findById(id);
 
-    bcryptPassword(password: string): Promise<string> {
-        return bcrypt.hash(password, UserService.PASSWORD_SALT_ROUNDS);
+    if (user) {
+      return user.nickname;
     }
-
-    bcryptComparePassword(password: string, hash: string): Promise<boolean> {
-        return bcrypt.compare(password, hash);
-    }
-
-    async checkUserEmailExist(email: string): Promise<boolean> {
-
-        let user: User | null = await this.userDAO.findByEmail(email);
-
-        if (user) {
-            return true;
-        }
-        return false;
-
-    }
-
-    async checkUserExistById(id: number): Promise<boolean> {
-
-        let user: User | null = await this.userDAO.findById(id);
-
-        if (user) {
-            return true;
-        }
-        return false;
-
-    }
-
-    async getUserNameById(id: number): Promise<string|null> {
-        let user: User | null = await this.userDAO.findById(id);
-
-        if (user) {
-            return user.nickname;
-        }
-        return null;
-    }
+    return null;
+  }
 }

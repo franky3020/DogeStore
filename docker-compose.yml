@@ -13,7 +13,6 @@ services:
       - ./product_zip:/usr/src/app/product_zip/
       - ./public/productImg:/usr/src/app/public/productImg/
 
-   
   mysql:
     image: mysql:8.0.29-oracle
     volumes:
@@ -21,7 +20,7 @@ services:
     ports:
       - ${DOCKER_COMPOSE_DB_PORT}:3306
     restart: always
-    environment: 
+    environment:
       MYSQL_ROOT_PASSWORD: ${DB_PWD}
 
 volumes:

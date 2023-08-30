@@ -1,70 +1,96 @@
-
 import Product from "../entity/Product";
 import mysql from "mysql2";
 import { GetProductDBRes } from "../entity/GetProductDBRes";
 
-
 export default class ProductDAO {
+  private connection: mysql.Pool;
 
-    private connection: mysql.Pool;
+  constructor(connection: mysql.Pool) {
+    this.connection = connection;
+  }
 
-    constructor(connection: mysql.Pool) {
-        this.connection = connection;
+  create(product: Product): Promise<any> {
+    let connection = this.connection;
+
+    if (product.id !== null) {
+      let sql =
+        "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
+      return connection
+        .promise()
+        .query(sql, [
+          product.id,
+          product.name,
+          product.create_user_id,
+          product.price,
+          product.describe,
+        ]);
+    } else {
+      let sql =
+        "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
+      return connection
+        .promise()
+        .query(sql, [
+          product.name,
+          product.create_user_id,
+          product.price,
+          product.describe,
+        ]);
     }
+  }
 
-    create(product: Product): Promise<any> {
-        let connection = this.connection;
+  update(product: Product): Promise<any> {
+    let connection = this.connection;
 
-        if( product.id !== null ) {
-            let sql = "INSERT INTO `Products`(`id`,`name`,`create_user_id`,`price`, `describe`)VALUES(?,?,?,?,?)";
-            return connection.promise().query(sql, [product.id, product.name, product.create_user_id, product.price, product.describe]);
-        } else {
-            let sql = "INSERT INTO `Products`(`name`,create_user_id,`price`,`describe`)VALUES(?,?,?,?)";
-            return connection.promise().query(sql, [product.name, product.create_user_id, product.price, product.describe]);
-        }
-    }
+    let sql =
+      "UPDATE `Products` SET `name` = ?, `create_user_id` = ?,`price` = ?, `describe` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
 
-    update(product: Product): Promise<any> {
-        
-        let connection = this.connection;
+    return connection
+      .promise()
+      .execute(sql, [
+        product.name,
+        product.create_user_id,
+        product.price,
+        product.describe,
+        product.id,
+      ]);
+  }
 
-        let sql = "UPDATE `Products` SET `name` = ?, `create_user_id` = ?,`price` = ?, `describe` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
+  findById(id: number): Promise<Product | null> {
+    let connection = this.connection;
 
-        return connection.promise().execute(sql, [ product.name, product.create_user_id, product.price, product.describe, product.id ]);
+    let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-    }
+    return new Promise(async (resolve, reject) => {
+      let rows: any, fields: any;
+      try {
+        [rows, fields] = await connection.promise().execute(sql, [id]);
+      } catch (err) {
+        return reject(err);
+      }
 
-    findById(id: number): Promise<Product | null> {
+      let products: Product[] = JSON.parse(JSON.stringify(rows));
 
-        let connection = this.connection;
+      if (products.length === 0) {
+        return resolve(null);
+      }
 
-        let sql = "SELECT * FROM `Products` WHERE `id` = ?"; // 記得這回傳依舊是list
+      let product = products[0];
+      return resolve(
+        new Product(
+          product.id,
+          product.name,
+          product.create_user_id,
+          product.price,
+          product.describe,
+          [],
+        ),
+      );
+    });
+  }
 
-        return new Promise(async (resolve, reject) => {
-            let rows: any, fields: any;
-            try{
-                [rows, fields] = await connection.promise().execute(sql, [id]);
-
-            }catch(err) {
-                return reject(err);
-            }
-
-            let products: Product[] = JSON.parse(JSON.stringify(rows));
-
-            if ( products.length === 0 ) {
-                return resolve(null);
-            }
-
-            let product = products[0];
-            return resolve(new Product(product.id, product.name, product.create_user_id, product.price, product.describe, []));
-            
-        });
-
-    }
-
-    findAll(): Promise< Product[] > { 
-
-        let sql = " \
+  findAll(): Promise<Product[]> {
+    let sql =
+      " \
         SELECT \
             `Products`.`id`, \
             `Products`.`name`, \
@@ -78,46 +104,41 @@ export default class ProductDAO {
             `User` \
             ON `Products`.`create_user_id` = `User`.`id`";
 
+    let connection = this.connection;
+    let returnProducts: Product[] = [];
 
-        let connection = this.connection;
-        let returnProducts: Product[] = [];
+    return new Promise(async (resolve, reject) => {
+      let rows: any, fields: any;
 
-        return new Promise(async (resolve, reject) => {
-            let rows: any, fields: any;
+      try {
+        [rows, fields] = await connection.promise().query(sql);
+      } catch (err) {
+        return reject(err);
+      }
 
-            try{
-                [rows, fields] = await connection.promise().query(sql);
-            } catch(err) {
-                return reject(err);
-            }
+      let jResult = JSON.parse(JSON.stringify(rows));
 
-            let jResult= JSON.parse(JSON.stringify(rows));
-            
-            for (const getProductRes of jResult as GetProductDBRes[]) {
+      for (const getProductRes of jResult as GetProductDBRes[]) {
+        let a_product = new Product(
+          getProductRes.id,
+          getProductRes.name,
+          getProductRes.create_user_id,
+          getProductRes.price,
+          getProductRes.describe,
+          [],
+        );
 
-                let a_product = new Product(getProductRes.id,
-                                            getProductRes.name,
-                                            getProductRes.create_user_id,
-                                            getProductRes.price,
-                                            getProductRes.describe, []);
-                
-                a_product.setCreateUserName(getProductRes.nickname);
-                returnProducts.push(a_product);
+        a_product.setCreateUserName(getProductRes.nickname);
+        returnProducts.push(a_product);
+      }
+      return resolve(returnProducts);
+    });
+  }
 
-            }
-            return resolve(returnProducts);
-        });
+  deleteById(id: number): Promise<any> {
+    let connection = this.connection;
 
-    }
-
-    deleteById(id: number): Promise<any> {
-
-        let connection = this.connection;
-
-        let sql = "DELETE FROM `Products` WHERE `id` = ?";
-        return connection.promise().execute(sql, [ id ]);
-        
-    }
-
-
+    let sql = "DELETE FROM `Products` WHERE `id` = ?";
+    return connection.promise().execute(sql, [id]);
+  }
 }

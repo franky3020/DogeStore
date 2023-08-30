@@ -1,671 +1,570 @@
 {
-	"info": {
-		"_postman_id": "182e9f40-61a5-411a-8d7f-74dc993fe3dd",
-		"name": "Doge_Store",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Admin API - test",
-			"item": [
-				{
-					"name": "Admin_login_and_set_jwt",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"\r",
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"var jsonData = pm.response.json();\r",
-									"pm.environment.set(\"admin_jwt\", jsonData.token);\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"{{admin_email}}\",\r\n    \"password\": \"{{admin_password}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/user/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"user",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"pm.test(\"Status code is 201\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"postman-name\",\r\n    \"create_user_id\": 1,\r\n    \"price\": 600,\r\n    \"describe\": \"postman-describe\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/product",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get All product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"have 4 product\", function () {\r",
-									"    let jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.length).to.eql(4);\r",
-									"});\r",
-									"\r",
-									"let jsonData = pm.response.json();\r",
-									"pm.environment.set(\"first_product_id\", jsonData[0].id);\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/product",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get product by Id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"product id is correct\", function () {\r",
-									"    let jsonData = pm.response.json();\r",
-									"    let first_product_id = pm.environment.get(\"first_product_id\");\r",
-									"    pm.expect(jsonData.id).to.eql(first_product_id);\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/product/{{first_product_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product",
-								"{{first_product_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete product id:4",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/product/{{first_product_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product",
-								"{{first_product_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get All product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"have 3 product\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.length).to.eql(3);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/product",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"auth": {
-				"type": "bearer",
-				"bearer": [
-					{
-						"key": "token",
-						"value": "{{admin_jwt}}",
-						"type": "string"
-					}
-				]
-			},
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "General userAPI - test",
-			"item": [
-				{
-					"name": "User_login_and_set_jwt",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"\r",
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"var jsonData = pm.response.json();\r",
-									"pm.environment.set(\"user_jwt\", jsonData.token);\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"{{admin_email}}\",\r\n    \"password\": \"{{admin_password}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/user/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"user",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get All product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"let jsonData = pm.response.json();\r",
-									"pm.environment.set(\"first_product_id\", jsonData[0].id);\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/product",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "purchase first product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "authorization",
-								"value": "{{jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"product_id\": {{first_product_id}}\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/purchase",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"purchase"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get purchase",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"have first product\", function () {\r",
-									"    let jsonData = pm.response.json();\r",
-									"    let first_product_id = pm.environment.get(\"first_product_id\");\r",
-									"    pm.expect(jsonData[0]).to.eql(first_product_id);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/purchase",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"purchase"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"auth": {
-				"type": "bearer",
-				"bearer": [
-					{
-						"key": "token",
-						"value": "{{user_jwt}}",
-						"type": "string"
-					}
-				]
-			},
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "other",
-			"item": [
-				{
-					"name": "delete Product",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/product/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "user register",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test2@gmail.com\",\r\n    \"password\": \"12345678\",\r\n    \"nickname\": \"test2\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/user/register",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"user",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get purchase product",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/purchase/productZipFile/3",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"purchase",
-								"productZipFile",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "upload product img",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "uploaded_file",
-									"type": "file",
-									"src": "/C:/Users/franky/Pictures/88.png"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/api/product/0/upload",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"product",
-								"0",
-								"upload"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add purchase zip file",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "authorization",
-								"value": "{{jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "uploaded_file",
-									"type": "file",
-									"src": "/C:/Users/franky/Downloads/product.zip"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/api/purchase/productZipFile/2",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"purchase",
-								"productZipFile",
-								"2"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "variable_key",
-			"value": ""
-		}
-	]
+  "info": {
+    "_postman_id": "182e9f40-61a5-411a-8d7f-74dc993fe3dd",
+    "name": "Doge_Store",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Admin API - test",
+      "item": [
+        {
+          "name": "Admin_login_and_set_jwt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.environment.set(\"admin_jwt\", jsonData.token);\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"{{admin_email}}\",\r\n    \"password\": \"{{admin_password}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"postman-name\",\r\n    \"create_user_id\": 1,\r\n    \"price\": 600,\r\n    \"describe\": \"postman-describe\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/product",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get All product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"have 4 product\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.length).to.eql(4);\r",
+                  "});\r",
+                  "\r",
+                  "let jsonData = pm.response.json();\r",
+                  "pm.environment.set(\"first_product_id\", jsonData[0].id);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/product",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get product by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"product id is correct\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "    let first_product_id = pm.environment.get(\"first_product_id\");\r",
+                  "    pm.expect(jsonData.id).to.eql(first_product_id);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/product/{{first_product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product", "{{first_product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete product id:4",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/product/{{first_product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product", "{{first_product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get All product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"have 3 product\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.length).to.eql(3);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/product",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product"]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_jwt}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "General userAPI - test",
+      "item": [
+        {
+          "name": "User_login_and_set_jwt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.environment.set(\"user_jwt\", jsonData.token);\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"{{admin_email}}\",\r\n    \"password\": \"{{admin_password}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get All product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "let jsonData = pm.response.json();\r",
+                  "pm.environment.set(\"first_product_id\", jsonData[0].id);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/product",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "purchase first product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{jwt}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"product_id\": {{first_product_id}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/purchase",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get purchase",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"have first product\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "    let first_product_id = pm.environment.get(\"first_product_id\");\r",
+                  "    pm.expect(jsonData[0]).to.eql(first_product_id);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/purchase",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase"]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{user_jwt}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "other",
+      "item": [
+        {
+          "name": "delete Product",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/product/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"test2@gmail.com\",\r\n    \"password\": \"12345678\",\r\n    \"nickname\": \"test2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get purchase product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/purchase/productZipFile/3",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase", "productZipFile", "3"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "upload product img",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "uploaded_file",
+                  "type": "file",
+                  "src": "/C:/Users/franky/Pictures/88.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/product/0/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "product", "0", "upload"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add purchase zip file",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{jwt}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "uploaded_file",
+                  "type": "file",
+                  "src": "/C:/Users/franky/Downloads/product.zip"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/purchase/productZipFile/2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase", "productZipFile", "2"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "variable_key",
+      "value": ""
+    }
+  ]
 }

@@ -1,135 +1,125 @@
-
 import mysql from "mysql2";
 import User from "../entity/User";
 
 export default class UserDAO {
+  private connection: mysql.Pool;
 
-    private connection: mysql.Pool;
+  constructor(connection: mysql.Pool) {
+    this.connection = connection;
+  }
 
-    constructor(connection: mysql.Pool) {
-        this.connection = connection;
+  create(user: User): Promise<any> {
+    let connection = this.connection;
+
+    // Todo 改成判斷 undefine 比較好
+    if (user.id !== null) {
+      let sql =
+        "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
+      return connection
+        .promise()
+        .query(sql, [user.id, user.email, user.nickname, user.password]);
+    } else {
+      let sql =
+        "INSERT INTO `User`(`email`,`nickname`,`password`)VALUES(?,?,?)";
+      return connection
+        .promise()
+        .query(sql, [user.email, user.nickname, user.password]);
     }
+  }
 
-    create(user: User): Promise<any> {
-        let connection = this.connection;
+  update(user: User): Promise<any> {
+    let connection = this.connection;
 
-        // Todo 改成判斷 undefine 比較好
-        if( user.id !== null ) {
+    let sql =
+      "UPDATE `User` SET `email` = ?, `nickname` = ?,`password` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
+    return connection
+      .promise()
+      .execute(sql, [user.email, user.nickname, user.password, user.id]);
+  }
 
-            let sql = "INSERT INTO `User`(`id`,`email`,`nickname`,`password`)VALUES(?,?,?,?)";
-            return connection.promise().query(sql, [user.id, user.email, user.nickname, user.password]);
+  findById(id: number): Promise<User | null> {
+    let connection = this.connection;
 
-        } else {
+    let sql = "SELECT * FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
 
-            let sql = "INSERT INTO `User`(`email`,`nickname`,`password`)VALUES(?,?,?)";
-            return connection.promise().query(sql, [user.email, user.nickname, user.password]);
-        }
-        
-    }
+    return new Promise(async (resolve, reject) => {
+      let rows: any, fields: any;
 
-    update(user: User): Promise<any> {
-        
-        let connection = this.connection;
+      try {
+        [rows, fields] = await connection.promise().execute(sql, [id]);
+      } catch (err) {
+        return reject(err);
+      }
 
-        let sql = "UPDATE `User` SET `email` = ?, `nickname` = ?,`password` = ? WHERE `id` = ?"; // 記得這回傳依舊是list
-        return connection.promise().execute(sql, [ user.email, user.nickname, user.password, user.id ]);
+      let users: User[] = JSON.parse(JSON.stringify(rows));
 
-    }
+      if (users.length === 0) {
+        return resolve(null);
+      }
 
-    findById(id: number): Promise<User | null> {
+      let user = users[0];
 
-        let connection = this.connection;
+      return resolve(
+        new User(user.id, user.email, user.nickname, user.password),
+      );
+    });
+  }
 
-        let sql = "SELECT * FROM `User` WHERE `id` = ?"; // 記得這回傳依舊是list
+  findByEmail(email: string): Promise<User | null> {
+    let connection = this.connection;
 
-        return new Promise(async (resolve, reject) => {
+    let sql = "SELECT * FROM `User` WHERE `email` = ?"; // 記得這回傳依舊是list
 
-            let rows: any, fields: any;
+    return new Promise(async (resolve, reject) => {
+      let rows: any, fields: any;
+      try {
+        [rows, fields] = await connection.promise().execute(sql, [email]);
+      } catch (err) {
+        return reject(err);
+      }
 
-            try{
-                [rows, fields] = await connection.promise().execute(sql, [id]);
-            } catch(err) {
-                return reject(err);
-            }
+      let users: User[] = JSON.parse(JSON.stringify(rows));
 
-            let users: User[] = JSON.parse(JSON.stringify(rows));
+      if (users.length === 0) {
+        return resolve(null);
+      }
 
-            if ( users.length === 0 ) {
-                return resolve(null);
-            }
+      let user = users[0];
 
-            let user = users[0];
-            
-            return resolve(new User(user.id, user.email, user.nickname, user.password));
-           
-        });
+      return resolve(
+        new User(user.id, user.email, user.nickname, user.password),
+      );
+    });
+  }
 
-    }
+  findAll(): Promise<User[]> {
+    let sql = "SELECT * FROM `User`";
+    let connection = this.connection;
+    let returnUsers: User[] = [];
 
-    findByEmail(email: string): Promise<User | null> {
+    return new Promise(async (resolve, reject) => {
+      let rows: any, fields: any;
 
-        let connection = this.connection;
+      try {
+        [rows, fields] = await connection.promise().query(sql);
+      } catch (err) {
+        return reject(err);
+      }
 
-        let sql = "SELECT * FROM `User` WHERE `email` = ?"; // 記得這回傳依舊是list
+      let jResult = JSON.parse(JSON.stringify(rows));
+      for (const user of jResult as User[]) {
+        returnUsers.push(
+          new User(user.id, user.email, user.nickname, user.password),
+        );
+      }
+      return resolve(returnUsers);
+    });
+  }
 
-        return new Promise(async (resolve, reject) => {
+  deleteById(id: number): Promise<any> {
+    let connection = this.connection;
 
-            let rows: any, fields: any;
-            try{
-                [rows, fields] = await connection.promise().execute(sql, [email]);
-            }catch(err) {
-                return reject(err);
-            }
-
-
-            let users: User[] = JSON.parse(JSON.stringify(rows));
-
-            if ( users.length === 0 ) {
-                return resolve(null);
-            }
-
-            let user = users[0];
-            
-            return resolve(new User(user.id, user.email, user.nickname, user.password));
-
-           
-        });
-
-    }
-
-    findAll(): Promise< User[] > { 
-
-        let sql = "SELECT * FROM `User`";
-        let connection = this.connection;
-        let returnUsers: User[] = [];
-
-        return new Promise(async (resolve, reject) => {
-
-            let rows: any, fields: any;
-
-            try{
-                [rows, fields] = await connection.promise().query(sql);
-            } catch(err) {
-                return reject(err);
-            }
-
-            let jResult= JSON.parse(JSON.stringify(rows));
-            for(const user of jResult as User[]) {
-                returnUsers.push(new User(user.id, user.email, user.nickname, user.password));
-            }
-            return resolve(returnUsers);
-            
-        });
-
-    }
-
-    deleteById(id: number): Promise<any> {
-
-        let connection = this.connection;
-
-        let sql = "DELETE FROM `User` WHERE `id` = ?";
-        return connection.promise().execute(sql, [ id ]);
-    }
-
-
+    let sql = "DELETE FROM `User` WHERE `id` = ?";
+    return connection.promise().execute(sql, [id]);
+  }
 }

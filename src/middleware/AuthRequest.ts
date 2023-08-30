@@ -1,5 +1,5 @@
-import { Request } from 'express';
+import { Request } from "express";
 
 export interface AuthRequest extends Request {
-    authUserID?: number;
+  authUserID?: number;
 }
