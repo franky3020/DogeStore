@@ -2,7 +2,7 @@
 
 Website: http://frankyya.com:35003/
 
-Node 版本: 18.16.0
+
 
 ## Test coverage
 
@@ -44,3 +44,10 @@ Node 版本: 18.16.0
 [Demo](http://dogecoin.idv.tw:50020/)
 
 ![](doc/readmeGIF/will_update_3dView.gif)
+
+
+## 開發備忘錄
+
+建造 測試用 DB
+docker run --name mysql -p 53306:3306 -e MYSQL_ROOT_PASSWORD=franky123 -d mysql:8.0.29-oracle
+

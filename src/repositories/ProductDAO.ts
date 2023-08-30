@@ -68,23 +68,31 @@ export default class ProductDAO {
         return reject(err);
       }
 
-      let products: Product[] = JSON.parse(JSON.stringify(rows));
+      type productDBRes = {
+        id: number;
+        name: string;
+        create_user_id: number;
+        price: number;
+        describe: string;
+      };
 
-      if (products.length === 0) {
+      const productDBResArray: productDBRes[] = JSON.parse(
+        JSON.stringify(rows),
+      );
+
+      if (productDBResArray.length === 0) {
         return resolve(null);
       }
 
-      let product = products[0];
-      return resolve(
-        new Product(
-          product.id,
-          product.name,
-          product.create_user_id,
-          product.price,
-          product.describe,
-          [],
-        ),
+      const a_productDBRes = productDBResArray[0];
+      const product = new Product(
+        a_productDBRes.id,
+        a_productDBRes.name,
+        a_productDBRes.create_user_id,
+        a_productDBRes.price,
+        a_productDBRes.describe,
       );
+      return resolve(product);
     });
   }
 

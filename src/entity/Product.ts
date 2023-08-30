@@ -13,7 +13,7 @@ class Product {
     create_user_id: number,
     price: number,
     describe: string,
-    photos?: string[],
+    photos: string[] = [],
   ) {
     this.name = name;
     this.create_user_id = create_user_id;
@@ -22,11 +22,7 @@ class Product {
 
     this.id = id;
 
-    if (photos) {
-      this.photos = photos;
-    } else {
-      this.photos = new Array(); // Lazy initialization
-    }
+    this.photos = photos;
   }
 
   setCreateUserName(username: string): void {

@@ -12,6 +12,7 @@ const product_init_1 = {
   price: 100,
   describe: "test_describe",
   photos: [],
+  create_user_name: "",
 };
 
 test("FindProductById", async () => {
@@ -58,6 +59,7 @@ test("Find all product", async () => {
     price: 100,
     describe: "test_describe",
     photos: [],
+    create_user_name: "",
   };
 
   let product_2 = {
@@ -67,6 +69,7 @@ test("Find all product", async () => {
     price: 200,
     describe: "test_describe",
     photos: [],
+    create_user_name: "",
   };
 
   let products = [
